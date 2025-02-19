@@ -241,6 +241,7 @@ typedef struct packed {
 } cbus_resp_t;
 
 typedef logic bool;     // i like it
+typedef u5 reg_addr;    // i like it too
 
 endpackage
 `endif
