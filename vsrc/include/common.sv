@@ -240,5 +240,7 @@ typedef struct packed {
     word_t data;        // the data from AXI bus
 } cbus_resp_t;
 
+typedef logic bool;     // i like it
+
 endpackage
 `endif
