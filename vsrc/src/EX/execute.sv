@@ -3,6 +3,7 @@
 
 `include "include/common.sv"
 `include "include/temp_storage.sv"
+`include "src/EX/alu.sv"
 
 module execute
     import common::*;
