@@ -5,7 +5,12 @@
 `include "include/common.sv"
 `endif
 
-module core import common::*;(
+`include "include/temp_storage.sv"
+
+module core
+	import common::*;
+    import temp_storage::*;
+(
 	input  logic       clk, reset,
 	output ibus_req_t  ireq,
 	input  ibus_resp_t iresp,
@@ -14,12 +19,34 @@ module core import common::*;(
 	input  logic       trint, swint, exint
 );
 	
-	word_t [31:0] regs;
+	word_t [31:0] regs; // regs should be from reg.sv
 	word_t pc;
 
 	bool write_regs_enable;
 	u5 write_reg_addr;
 	word_t write_reg_data;
+
+	if_id if_id_state, if_id_state_new;
+	id_ex id_ex_state, id_ex_state_new;
+	ex_mem ex_mem_state, ex_mem_state_new;
+	mem_wb mem_wb_state, mem_wb_state_new;
+
+	always_ff @(posedge clk or posedge reset) begin
+		if (reset) begin
+			
+			pc = PCINIT;
+			for (int i = 0; i < 32; i = i + 1) begin
+				regs[i] = 'h0000_0000_0000_0000;
+			end
+			// do other reset stuff
+
+		end else begin
+			if_id_state = if_id_state_new;
+			id_ex_state = id_ex_state_new;
+			ex_mem_state = ex_mem_state_new;
+			mem_wb_state = mem_wb_state_new;
+		end
+	end
 
 `ifdef VERILATOR
 	DifftestInstrCommit DifftestInstrCommit(
