@@ -135,11 +135,11 @@ typedef enum i8 {
     MLEN256 = 8'hff
 } mlen_t;
 
-parameter mlen_t AXI_BURST_LEN =AXI_BURST_NUM == 16 ? MLEN16 :
- 							    AXI_BURST_NUM == 32 ? MLEN32 :
-							    AXI_BURST_NUM == 64 ? MLEN64 :
-							    AXI_BURST_NUM == 128 ? MLEN128 :
-							    AXI_BURST_NUM == 256 ? MLEN256 : MLEN1;
+parameter mlen_t AXI_BURST_LEN = AXI_BURST_NUM == 16 ? MLEN16 :
+ 							     AXI_BURST_NUM == 32 ? MLEN32 :
+							     AXI_BURST_NUM == 64 ? MLEN64 :
+							     AXI_BURST_NUM == 128 ? MLEN128 :
+							     AXI_BURST_NUM == 256 ? MLEN256 : MLEN1;
 
 /**
  * SOME NOTES ON BUSES
