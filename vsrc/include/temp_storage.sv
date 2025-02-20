@@ -7,9 +7,7 @@ import common::*;
 package temp_storage;
 
     typedef struct packed {
-        reg_addr reg1_addr;
-        reg_addr reg2_addr;
-        
+        u32 instu;
     } if_id;
 
     typedef struct packed {
@@ -18,10 +16,13 @@ package temp_storage;
         u12 immed;
         u3 funct3;
         u7 funct7;
+        u7 opcode;
+        reg_addr reg_dest_addr;
     } id_ex;
 
     typedef struct packed {
         word_t alu_result;
+        reg_addr reg_dest_addr;
     } ex_mem;
 
     typedef struct packed {
