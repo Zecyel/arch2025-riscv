@@ -26,11 +26,12 @@ module alu import common::*; (
                 'h400: result = reg1 ^ reg2; // XOR
             endcase
         end else if (opcode == 7'b0010011) begin
+            word_t sign_extended_immed = {{52{immed[11]}}, immed};
             case (funct3)
-                'h0: result = reg1 + immed; // ADDI
-                'h4: result = reg1 ^ immed; // XORI
-                'h6: result = reg1 | immed; // ORI
-                'h7: result = reg1 & immed; // ANDI
+                'h0: result = reg1 + sign_extended_immed; // ADDI
+                'h4: result = reg1 ^ sign_extended_immed; // XORI
+                'h6: result = reg1 | sign_extended_immed; // ORI
+                'h7: result = reg1 & sign_extended_immed; // ANDI
             endcase
         end
 
