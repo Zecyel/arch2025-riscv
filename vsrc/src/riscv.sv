@@ -25,9 +25,9 @@ module riscv
     // for DiffTest
     output word_t pc,
     output word_t [31:0] regs,
-    output bool write_regs_enable,
-	output reg_addr write_reg_addr,
-	output word_t write_reg_data
+    output bool reg_write_enable,
+	output reg_addr reg_dest_addr,
+	output word_t reg_write_data
 );
 
 	if_id if_id_state, if_id_state_new;
@@ -47,9 +47,9 @@ module riscv
     decoder decoder_instance (
 		.if_id_state(if_id_state),
 		.id_ex_state(id_ex_state_new),
-		.reg_write_enable(write_regs_enable),
-		.reg_write_addr(write_reg_addr),
-		.reg_write_data(write_reg_data),
+		.reg_write_enable(reg_write_enable),
+		.reg_dest_addr(reg_dest_addr),
+		.reg_write_data(reg_write_data),
 
 		.regs_value(regs),
 		.clk(clk),
@@ -60,6 +60,18 @@ module riscv
         .id_ex_state(id_ex_state),
         .ex_mem_state(ex_mem_state_new)
     );
+
+	memory memory_instance (
+		.ex_mem_state(ex_mem_state),
+		.mem_wb_state(mem_wb_state_new)
+	);
+
+	writeback writeback_instance (
+		.mem_wb_state(mem_wb_state),
+		.reg_write_enable(reg_write_enable),
+		.reg_dest_addr(reg_dest_addr),
+		.reg_write_data(reg_write_data)
+	);
 
 	always_ff @(posedge clk or posedge rst) begin
 		if (rst) begin

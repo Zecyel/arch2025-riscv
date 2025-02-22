@@ -1,0 +1,24 @@
+`ifndef __WRITEBACK_SV
+`define __WRITEBACK_SV
+
+`include "include/common.sv"
+`include "include/temp_storage.sv"
+
+module writeback
+    import common::*;
+    import temp_storage::*;
+(
+    input mem_wb mem_wb_state,
+    output reg_addr reg_dest_addr,
+    output bool reg_write_enable,
+    output word_t reg_write_data
+);
+    always_comb begin
+        reg_dest_addr = mem_wb_state.reg_dest_addr;
+        reg_write_enable = mem_wb_state.reg_write_enable;
+        reg_write_data = mem_wb_state.reg_write_data;
+    end
+
+endmodule
+
+`endif
