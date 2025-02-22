@@ -7,7 +7,7 @@ import common::*;
 package temp_storage;
 
     typedef struct packed {
-        u32 instu;
+        u32 inst;
     } if_id;
 
     typedef struct packed {
@@ -26,7 +26,7 @@ package temp_storage;
     } ex_mem;
 
     typedef struct packed {
-
+        word_t mem_result; // to avoid warnings
     } mem_wb;
 
 

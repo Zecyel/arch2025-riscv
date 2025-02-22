@@ -9,12 +9,11 @@ module execute
     import common::*;
     import temp_storage::*;
 (
-    // input logic clock,
     input id_ex id_ex_state,
     output ex_mem ex_mem_state
 );
     
-    alu alu_inst(
+    alu alu_inst (
         .immed(id_ex_state.immed),
         .reg1(id_ex_state.reg1_value),
         .reg2(id_ex_in.reg2_value),
