@@ -52,7 +52,7 @@ module core import common::*; (
 		.isRVC              (0),
 		.scFailed           (0),
 		.wen                (write_regs_enable),
-		.wdest              (write_reg_addr),
+		.wdest              ({3'b000, write_reg_addr}), // to make kooWZ happy
 		.wdata              (write_reg_data)
 	);
 
