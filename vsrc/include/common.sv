@@ -242,6 +242,7 @@ typedef struct packed {
 
 typedef logic bool;     // i like it
 typedef u5 reg_addr;    // i like it too
+typedef u32 inst_t;     // i like it three
 
 endpackage
 `endif
