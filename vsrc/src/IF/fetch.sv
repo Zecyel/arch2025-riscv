@@ -16,18 +16,12 @@ module fetch
     input logic clk,
     input logic rst,
 
-    output if_id if_id_state
+    output if_id if_id_state,
+    output bool awaiting
 );
 
     addr_t _pc;
-
-    always_ff @(posedge clk or posedge rst) begin
-        if (rst) begin
-            _pc <= PCINIT;
-        end else begin
-            _pc <= _pc + 4;
-        end
-    end
+    bool waiting;
 
     load_inst load_inst_inst (
         .ireq(ireq),
@@ -35,10 +29,20 @@ module fetch
         .pc(_pc),
         .clk(clk),
         .rst(rst),
-        .inst(if_id_state.inst)
+        .inst(if_id_state.inst),
+        .awaiting(waiting)
     );
 
+    always_ff @(posedge rst or negedge waiting) begin
+        if (rst) begin
+            _pc <= PCINIT;
+        end else begin
+            _pc <= _pc + 4;
+        end
+    end
+
     assign pc = _pc;
+    assign awaiting = waiting;
 
 endmodule
 

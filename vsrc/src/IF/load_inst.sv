@@ -8,7 +8,8 @@ module load_inst import common::*; (
     input logic rst,
 
 	output ibus_req_t ireq,
-    output inst_t inst
+    output inst_t inst,
+    output bool awaiting
 );
 
     bool waiting;
@@ -17,9 +18,8 @@ module load_inst import common::*; (
         if (rst) begin
             waiting <= 0;
             ireq.valid <= 0;
-            inst <= 'h0000_0000_0000_0000; // nop instruction
+            inst <= 'h0000_0000_0000_0000;
         end else begin
-            inst <= 'h0000_0000_0000_0000; // insert a nop
             if (! waiting) begin
                 ireq.valid <= 1;
                 ireq.addr <= pc;
@@ -27,6 +27,7 @@ module load_inst import common::*; (
             end else begin
                 if (iresp.addr_ok) begin
                     ireq.valid <= 0;
+                    // if not data ok, throw an exception?
                 end
 
                 if (iresp.data_ok) begin
@@ -36,6 +37,8 @@ module load_inst import common::*; (
             end
         end
     end
+
+    assign awaiting = waiting;
 
 endmodule
 

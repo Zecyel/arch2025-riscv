@@ -35,13 +35,18 @@ module riscv
 	ex_mem ex_mem_state, ex_mem_state_new;
 	mem_wb mem_wb_state, mem_wb_state_new;
 
+	bool fetch_inst_awaiting;
+
+	bool awaiting = fetch_inst_awaiting;
+
     fetch fetch_instance (
 		.ireq(ireq),
 		.iresp(iresp),
 		.pc(pc),
 		.clk(clk),
 		.rst(rst),
-		.if_id_state(if_id_state_new)
+		.if_id_state(if_id_state_new),
+		.awaiting(fetch_inst_awaiting)
     );
 
     decoder decoder_instance (
@@ -52,7 +57,7 @@ module riscv
 		.reg_write_data(reg_write_data),
 
 		.regs_value(regs),
-		.clk(clk),
+		.clk(!awaiting ? clk : 0),
 		.rst(rst)
     );
 
@@ -79,10 +84,12 @@ module riscv
 			// take on springboot
 			// don't forget your redhat
 		end else begin
-			if_id_state = if_id_state_new;
-			id_ex_state = id_ex_state_new;
-			ex_mem_state = ex_mem_state_new;
-			mem_wb_state = mem_wb_state_new;
+			if (! awaiting) begin
+				if_id_state = if_id_state_new;
+				id_ex_state = id_ex_state_new;
+				ex_mem_state = ex_mem_state_new;
+				mem_wb_state = mem_wb_state_new;
+			end
 		end
 	end
 
