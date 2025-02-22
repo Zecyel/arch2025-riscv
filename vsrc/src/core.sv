@@ -22,6 +22,7 @@ module core import common::*; (
 	bool reg_write_enable;
 	u5 reg_dest_addr;
 	word_t reg_write_data;
+	bool valid;
 	
 	riscv riscv_inst (
 		// cpu basics
@@ -37,7 +38,8 @@ module core import common::*; (
 		.regs(regs),
 		.reg_write_enable(reg_write_enable),
 		.reg_dest_addr(reg_dest_addr),
-		.reg_write_data(reg_write_data)
+		.reg_write_data(reg_write_data),
+		.valid(valid)
 	);
 
 `ifdef VERILATOR
@@ -45,9 +47,9 @@ module core import common::*; (
 		.clock              (clk),
 		.coreid             (0),
 		.index              (0),
-		.valid              (1'b1),
+		.valid              (valid),
 		.pc                 (pc),
-		.instr              (0),
+		.instr              (01234567),
 		.skip               (0),
 		.isRVC              (0),
 		.scFailed           (0),

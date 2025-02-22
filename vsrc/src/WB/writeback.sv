@@ -11,13 +11,18 @@ module writeback
     input mem_wb mem_wb_state,
     output reg_addr reg_dest_addr,
     output bool reg_write_enable,
-    output word_t reg_write_data
+    output word_t reg_write_data,
+
+    input logic clk,
+    output bool valid
 );
     always_comb begin
         reg_dest_addr = mem_wb_state.reg_dest_addr;
         reg_write_enable = mem_wb_state.reg_write_enable;
         reg_write_data = mem_wb_state.reg_write_data;
     end
+
+    assign valid = clk;
 
 endmodule
 

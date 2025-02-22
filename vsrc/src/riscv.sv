@@ -27,7 +27,8 @@ module riscv
     output word_t [31:0] regs,
     output bool reg_write_enable,
 	output reg_addr reg_dest_addr,
-	output word_t reg_write_data
+	output word_t reg_write_data,
+	output bool valid
 );
 
 	if_id if_id_state, if_id_state_new;
@@ -38,6 +39,8 @@ module riscv
 	bool fetch_inst_awaiting;
 
 	bool awaiting = fetch_inst_awaiting;
+
+	u32 cnt;
 
     fetch fetch_instance (
 		.ireq(ireq),
@@ -71,24 +74,33 @@ module riscv
 		.mem_wb_state(mem_wb_state_new)
 	);
 
+	bool temp_valid;
+
 	writeback writeback_instance (
 		.mem_wb_state(mem_wb_state),
 		.reg_write_enable(reg_write_enable),
 		.reg_dest_addr(reg_dest_addr),
-		.reg_write_data(reg_write_data)
+		.reg_write_data(reg_write_data),
+
+		.valid(temp_valid),
+		.clk(!awaiting ? clk : 0)
 	);
+
+	assign valid = temp_valid && (cnt > 5);
 
 	always_ff @(posedge clk or posedge rst) begin
 		if (rst) begin
+			cnt <= 0;
 			// drink a cup of java ( also try brew! )
 			// take on springboot
 			// don't forget your redhat
 		end else begin
+			cnt <= cnt + 1;
 			if (! awaiting) begin
-				if_id_state = if_id_state_new;
-				id_ex_state = id_ex_state_new;
-				ex_mem_state = ex_mem_state_new;
-				mem_wb_state = mem_wb_state_new;
+				if_id_state <= if_id_state_new;
+				id_ex_state <= id_ex_state_new;
+				ex_mem_state <= ex_mem_state_new;
+				mem_wb_state <= mem_wb_state_new;
 			end
 		end
 	end
