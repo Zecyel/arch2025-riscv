@@ -19,9 +19,9 @@ module core import common::*; (
 	word_t [31:0] regs;
 	word_t pc;
 
-	bool write_regs_enable;
-	u5 write_reg_addr;
-	word_t write_reg_data;
+	bool reg_write_enable;
+	u5 reg_dest_addr;
+	word_t reg_write_data;
 	
 	riscv riscv_inst (
 		// cpu basics
@@ -35,9 +35,9 @@ module core import common::*; (
 		// for DiffTest
 		.pc(pc),
 		.regs(regs),
-		.write_regs_enable(write_regs_enable),
-		.write_reg_addr(write_reg_addr),
-		.write_reg_data(write_reg_data)
+		.reg_write_enable(reg_write_enable),
+		.reg_dest_addr(reg_dest_addr),
+		.reg_write_data(reg_write_data)
 	);
 
 `ifdef VERILATOR
@@ -46,14 +46,14 @@ module core import common::*; (
 		.coreid             (0),
 		.index              (0),
 		.valid              (1'b1),
-		.pc                 (pc), // where to set PCINIT?
+		.pc                 (pc),
 		.instr              (0),
 		.skip               (0),
 		.isRVC              (0),
 		.scFailed           (0),
-		.wen                (write_regs_enable),
-		.wdest              ({3'b000, write_reg_addr}), // to make kooWZ happy
-		.wdata              (write_reg_data)
+		.wen                (reg_write_enable),
+		.wdest              ({3'b000, reg_dest_addr}), // to make kooWZ happy
+		.wdata              (reg_write_data)
 	);
 
 	DifftestArchIntRegState DifftestArchIntRegState (

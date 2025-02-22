@@ -16,15 +16,16 @@ module execute
     alu alu_inst (
         .immed(id_ex_state.immed),
         .reg1(id_ex_state.reg1_value),
-        .reg2(id_ex_in.reg2_value),
-        .funct3(id_ex_in.funct3),
-        .funct7(id_ex_in.funct7),
-        .opcode(id_ex_in.opcode),
-        .result(ex_mem_out.alu_result)
+        .reg2(id_ex_state.reg2_value),
+        .funct3(id_ex_state.funct3),
+        .funct7(id_ex_state.funct7),
+        .opcode(id_ex_state.opcode),
+        .result(ex_mem_state.alu_result)
     );
 
     always_comb begin
         ex_mem_state.reg_dest_addr = id_ex_state.reg_dest_addr;
+        ex_mem_state.reg_write_enable = id_ex_state.reg_write_enable;
     end
 
 
