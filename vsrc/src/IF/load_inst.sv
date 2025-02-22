@@ -8,8 +8,8 @@ module load_inst import common::*; (
     input logic rst,
 
 	output ibus_req_t ireq,
-    output word_t inst
-)
+    output inst_t inst
+);
 
     bool waiting;
 

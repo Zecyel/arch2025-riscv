@@ -7,7 +7,7 @@ import common::*;
 package temp_storage;
 
     typedef struct packed {
-        u32 inst;
+        inst_t inst;
     } if_id;
 
     typedef struct packed {
@@ -17,16 +17,27 @@ package temp_storage;
         u3 funct3;
         u7 funct7;
         u7 opcode;
+
+        // Provide by Instruction Decoder
+        // Injected by Write Back
         reg_addr reg_dest_addr;
+        bool reg_write_enable;
     } id_ex;
 
     typedef struct packed {
         word_t alu_result;
+
+        // pass down 
         reg_addr reg_dest_addr;
+        bool reg_write_enable;
     } ex_mem;
 
     typedef struct packed {
-        word_t mem_result; // to avoid warnings
+        word_t reg_write_data;
+
+        // pass down
+        reg_addr reg_dest_addr;
+        bool reg_write_enable;
     } mem_wb;
 
 

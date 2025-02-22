@@ -3,20 +3,20 @@
 
 `include "include/common.sv"
 
-module reg import common::*; (
+module regs import common::*; (
     input reg_addr reg1_addr,
     input reg_addr reg2_addr,
 
     input logic clk,
     input logic rst,
-    input bool write_en,
-    input reg_addr reg_write_addr,
+    input bool reg_write_enable,
+    input reg_addr reg_dest_addr,
     input word_t reg_write_data,
 
     output word_t [31:0] regs_value,
     output word_t reg1_value,
-    output word_t reg2_value,
-)
+    output word_t reg2_value
+);
 
     word_t [31:0] regs;
 
@@ -33,8 +33,8 @@ module reg import common::*; (
                 regs[i] = 'h0000_0000_0000_0000;
             end
         end else begin
-            if (write_en) begin
-                regs[reg_write_addr] = reg_write_data;
+            if (reg_write_enable) begin
+                regs[reg_dest_addr] = reg_write_data;
             end
         end
     end

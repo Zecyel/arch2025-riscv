@@ -2,7 +2,7 @@
 `define __DECODER_SV
 
 `include "include/common.sv"
-`include "src/ID/reg.sv"
+`include "src/ID/regs.sv"
 
 module decoder
     import common::*;
@@ -12,23 +12,23 @@ module decoder
     output id_ex id_ex_state,
 
     input bool reg_write_enable,
-    input reg_addr reg_write_addr,
-    input word_t reg_write_data
+    input reg_addr reg_dest_addr,
+    input word_t reg_write_data,
 
     output word_t [31:0] regs_value,
     input logic clk,
     input logic rst
-)
+);
 
-    u32 inst = if_id_state.inst
+    inst_t inst = if_id_state.inst;
 
-    reg reg_inst (
+    regs regs_inst (
         .reg1_addr(inst[19:15]),
         .reg2_addr(inst[24:20]),
         .clk(clk),
         .rst(rst),
-        .write_en(reg_write_enable),
-        .reg_write_addr(reg_write_addr),
+        .reg_write_enable(reg_write_enable),
+        .reg_dest_addr(reg_dest_addr),
         .reg_write_data(reg_write_data),
         .regs_value(regs_value),
         .reg1_value(id_ex_state.reg1_value),
@@ -44,6 +44,8 @@ module decoder
         end;
 
         id_ex_state.reg_dest_addr = inst[11:7];
+
+        id_ex_state.reg_write_enable = 1;
     end
 
 endmodule
