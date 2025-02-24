@@ -46,6 +46,10 @@ module decoder
         id_ex_state.reg_dest_addr = inst[11:7];
 
         id_ex_state.reg_write_enable = 1;
+
+        id_ex_state.inst_signal = if_id_state.inst_signal;
+        id_ex_state.inst = if_id_state.inst;
+        id_ex_state.inst_pc = if_id_state.inst_pc;
     end
 
 endmodule

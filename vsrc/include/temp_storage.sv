@@ -7,7 +7,9 @@ import common::*;
 package temp_storage;
 
     typedef struct packed {
+        bool inst_signal;
         inst_t inst;
+        addr_t inst_pc;
     } if_id;
 
     typedef struct packed {
@@ -22,6 +24,10 @@ package temp_storage;
         // Injected by Write Back
         reg_addr reg_dest_addr;
         bool reg_write_enable;
+        
+        bool inst_signal;
+        inst_t inst;
+        addr_t inst_pc;
     } id_ex;
 
     typedef struct packed {
@@ -30,6 +36,10 @@ package temp_storage;
         // pass down 
         reg_addr reg_dest_addr;
         bool reg_write_enable;
+
+        bool inst_signal;
+        inst_t inst;
+        addr_t inst_pc;
     } ex_mem;
 
     typedef struct packed {
@@ -38,6 +48,10 @@ package temp_storage;
         // pass down
         reg_addr reg_dest_addr;
         bool reg_write_enable;
+
+        bool inst_signal;
+        inst_t inst;
+        addr_t inst_pc;
     } mem_wb;
 
 

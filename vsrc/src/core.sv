@@ -17,12 +17,15 @@ module core import common::*; (
 );
 	
 	word_t [31:0] regs;
-	word_t pc;
+	addr_t pc;
 
 	bool reg_write_enable;
 	u5 reg_dest_addr;
 	word_t reg_write_data;
+
 	bool valid;
+	inst_t inst;
+	addr_t inst_pc;
 	
 	riscv riscv_inst (
 		// cpu basics
@@ -34,12 +37,14 @@ module core import common::*; (
 		.iresp(iresp),
 
 		// for DiffTest
-		.pc(pc),
+		.pc(pc), // the pc of to-be-executed instruction
 		.regs(regs),
 		.reg_write_enable(reg_write_enable),
 		.reg_dest_addr(reg_dest_addr),
 		.reg_write_data(reg_write_data),
-		.valid(valid)
+		.valid(valid),
+		.inst(inst),
+		.inst_pc(inst_pc) // the pc of the finished instruction
 	);
 
 `ifdef VERILATOR
@@ -48,8 +53,8 @@ module core import common::*; (
 		.coreid             (0),
 		.index              (0),
 		.valid              (valid),
-		.pc                 (pc),
-		.instr              (01234567),
+		.pc                 (inst_pc),
+		.instr              (inst),
 		.skip               (0),
 		.isRVC              (0),
 		.scFailed           (0),

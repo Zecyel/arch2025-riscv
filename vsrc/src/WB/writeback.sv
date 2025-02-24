@@ -14,15 +14,19 @@ module writeback
     output word_t reg_write_data,
 
     input logic clk,
-    output bool valid
+    output bool valid,
+    output inst_t inst,
+    output addr_t inst_pc
 );
     always_comb begin
         reg_dest_addr = mem_wb_state.reg_dest_addr;
         reg_write_enable = mem_wb_state.reg_write_enable;
         reg_write_data = mem_wb_state.reg_write_data;
-    end
 
-    assign valid = clk;
+        valid = mem_wb_state.inst_signal;
+        inst = mem_wb_state.inst;
+        inst_pc = mem_wb_state.inst_pc;
+    end
 
 endmodule
 

@@ -28,7 +28,9 @@ module riscv
     output bool reg_write_enable,
 	output reg_addr reg_dest_addr,
 	output word_t reg_write_data,
-	output bool valid
+	output bool valid,
+	output inst_t inst,
+	output addr_t inst_pc
 );
 
 	if_id if_id_state, if_id_state_new;
@@ -39,8 +41,6 @@ module riscv
 	bool fetch_inst_awaiting;
 
 	bool awaiting = fetch_inst_awaiting;
-
-	u32 cnt;
 
     fetch fetch_instance (
 		.ireq(ireq),
@@ -53,6 +53,8 @@ module riscv
     );
 
     decoder decoder_instance (
+		.clk(!awaiting ? clk : 0),
+
 		.if_id_state(if_id_state),
 		.id_ex_state(id_ex_state_new),
 		.reg_write_enable(reg_write_enable),
@@ -60,42 +62,40 @@ module riscv
 		.reg_write_data(reg_write_data),
 
 		.regs_value(regs),
-		.clk(!awaiting ? clk : 0),
 		.rst(rst)
     );
 
     execute execute_instance (
+		.clk(!awaiting ? clk : 0),
         .id_ex_state(id_ex_state),
         .ex_mem_state(ex_mem_state_new)
     );
 
 	memory memory_instance (
+		.clk(!awaiting ? clk : 0),
 		.ex_mem_state(ex_mem_state),
 		.mem_wb_state(mem_wb_state_new)
 	);
 
-	bool temp_valid;
-
 	writeback writeback_instance (
+		.clk(!awaiting ? clk : 0),
+
 		.mem_wb_state(mem_wb_state),
 		.reg_write_enable(reg_write_enable),
 		.reg_dest_addr(reg_dest_addr),
 		.reg_write_data(reg_write_data),
 
-		.valid(temp_valid),
-		.clk(!awaiting ? clk : 0)
+		.valid(valid),
+		.inst(inst),
+		.inst_pc(inst_pc)
 	);
-
-	assign valid = temp_valid && (cnt > 5);
 
 	always_ff @(posedge clk or posedge rst) begin
 		if (rst) begin
-			cnt <= 0;
 			// drink a cup of java ( also try brew! )
 			// take on springboot
 			// don't forget your redhat
 		end else begin
-			cnt <= cnt + 1;
 			if (! awaiting) begin
 				if_id_state <= if_id_state_new;
 				id_ex_state <= id_ex_state_new;

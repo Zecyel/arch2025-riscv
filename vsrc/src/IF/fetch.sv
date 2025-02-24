@@ -30,7 +30,9 @@ module fetch
         .clk(clk),
         .rst(rst),
         .inst(if_id_state.inst),
-        .awaiting(waiting)
+        .awaiting(waiting),
+        .inst_signal(if_id_state.inst_signal),
+        .inst_pc(if_id_state.inst_pc)
     );
 
     always_ff @(posedge rst or negedge waiting) begin
