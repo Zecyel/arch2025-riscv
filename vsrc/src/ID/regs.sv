@@ -33,7 +33,7 @@ module regs import common::*; (
                 regs[i] = 'h0000_0000_0000_0000;
             end
         end else begin
-            if (reg_write_enable) begin
+            if (reg_write_enable && reg_dest_addr != 0) begin
                 regs[reg_dest_addr] = reg_write_data;
             end
         end

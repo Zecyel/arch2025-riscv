@@ -50,7 +50,7 @@ module alu import common::*; (
             7'b0111011: begin
                 u32 unextended_result;
                 case ({1'b0, funct3, 1'b0, funct7})
-                    'h080: unextended_result = $signed(reg1[31:0] + reg2[31:0]); // ADDW
+                    'h000: unextended_result = $signed(reg1[31:0] + reg2[31:0]); // ADDW
                     'h020: unextended_result = $signed(reg1[31:0] - reg2[31:0]); // SUBW
                 endcase
 
@@ -58,7 +58,7 @@ module alu import common::*; (
             end
 
             default: begin
-                result = 'h1919810; // to make verilator happy
+                // result = 'h1919810; // to make verilator happy
             end
         endcase
 
