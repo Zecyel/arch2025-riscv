@@ -41,7 +41,9 @@ module decoder
         id_ex_state.funct7 = inst[31:25];
         if (id_ex_state.opcode == 7'b0010011) begin
             id_ex_state.immed = inst[31:20];
-        end;
+        end else if (id_ex_state.opcode == 7'b0011011) begin
+            id_ex_state.immed = inst[31:20];
+        end
 
         id_ex_state.reg_dest_addr = inst[11:7];
 
