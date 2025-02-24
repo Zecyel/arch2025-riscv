@@ -53,7 +53,8 @@ module riscv
     );
 
     decoder decoder_instance (
-		.clk(!awaiting ? clk : 0),
+		// .clk(!awaiting ? clk : 0),
+		.clk(clk),
 
 		.if_id_state(if_id_state),
 		.id_ex_state(id_ex_state_new),
@@ -66,26 +67,34 @@ module riscv
     );
 
     execute execute_instance (
-		.clk(!awaiting ? clk : 0),
+		// .clk(!awaiting ? clk : 0),
+		.clk(clk),
+
         .id_ex_state(id_ex_state),
         .ex_mem_state(ex_mem_state_new)
     );
 
 	memory memory_instance (
-		.clk(!awaiting ? clk : 0),
+		// .clk(!awaiting ? clk : 0),
+		.clk(clk),
+
 		.ex_mem_state(ex_mem_state),
 		.mem_wb_state(mem_wb_state_new)
 	);
 
+	bool raw_valid_signal;
+	bool delayed_1_clock_valid_signal;
+
 	writeback writeback_instance (
-		.clk(!awaiting ? clk : 0),
+		// .clk(!awaiting ? clk : 0),
+		.clk(clk),
 
 		.mem_wb_state(mem_wb_state),
 		.reg_write_enable(reg_write_enable),
 		.reg_dest_addr(reg_dest_addr),
 		.reg_write_data(reg_write_data),
 
-		.valid(valid),
+		.valid(raw_valid_signal),
 		.inst(inst),
 		.inst_pc(inst_pc)
 	);
@@ -96,14 +105,16 @@ module riscv
 			// take on springboot
 			// don't forget your redhat
 		end else begin
-			if (! awaiting) begin
-				if_id_state <= if_id_state_new;
-				id_ex_state <= id_ex_state_new;
-				ex_mem_state <= ex_mem_state_new;
-				mem_wb_state <= mem_wb_state_new;
-			end
+			if_id_state <= if_id_state_new;
+			id_ex_state <= id_ex_state_new;
+			ex_mem_state <= ex_mem_state_new;
+			mem_wb_state <= mem_wb_state_new;
+
+			delayed_1_clock_valid_signal <= raw_valid_signal;
 		end
 	end
+
+	assign valid = delayed_1_clock_valid_signal;
 
 endmodule
 

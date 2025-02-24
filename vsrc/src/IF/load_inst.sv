@@ -15,6 +15,7 @@ module load_inst import common::*; (
 );
 
     bool waiting;
+    addr_t last_pc;
 
     always_ff @(posedge clk or posedge rst) begin
         if (rst) begin
@@ -23,12 +24,15 @@ module load_inst import common::*; (
             inst <= 'h0000_0000;
             inst_signal <= 0;
             inst_pc <= PCINIT;
+            last_pc <= PCINIT;
         end else begin
             if (! waiting) begin
+                // send the request
                 ireq.valid <= 1;
                 ireq.addr <= pc;
                 waiting <= 1;
                 inst_signal <= 0;
+                last_pc <= pc;
             end else begin
                 if (iresp.addr_ok) begin
                     ireq.valid <= 0;
@@ -38,7 +42,7 @@ module load_inst import common::*; (
                 if (iresp.data_ok) begin
                     inst <= iresp.data;
                     inst_signal <= 1;
-                    inst_pc <= ireq.addr;
+                    inst_pc <= last_pc;
                     waiting <= 0;
                 end else begin
                     inst_signal <= 0;

@@ -27,10 +27,27 @@ module core import common::*; (
 	inst_t inst;
 	addr_t inst_pc;
 	
+	logic manual_reset_signal;
+	bool reseted;
+	
+	always_ff @(posedge reset or posedge clk) begin
+		if (reset) begin
+			reseted <= 0;
+			manual_reset_signal <= 0;
+		end else begin
+			if (reseted) begin
+				manual_reset_signal <= 0;
+			end else begin
+				manual_reset_signal <= 1;
+				reseted <= 1;
+			end
+		end
+	end
+
 	riscv riscv_inst (
 		// cpu basics
 		.clk(clk),
-		.rst(reset),
+		.rst(manual_reset_signal),
 		
 		// bus signals
 		.ireq(ireq),
