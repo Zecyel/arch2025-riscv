@@ -41,6 +41,7 @@ module riscv
 	bool fetch_inst_awaiting;
 
 	bool awaiting = fetch_inst_awaiting;
+	bool reg_write_clk;
 
     fetch fetch_instance (
 		.ireq(ireq),
@@ -54,7 +55,7 @@ module riscv
 
     decoder decoder_instance (
 		// .clk(!awaiting ? clk : 0),
-		.clk(clk),
+		// .clk(clk),
 
 		.if_id_state(if_id_state),
 		.id_ex_state(id_ex_state_new),
@@ -63,7 +64,8 @@ module riscv
 		.reg_write_data(reg_write_data),
 
 		.regs_value(regs),
-		.rst(rst)
+		.rst(rst),
+		.clk(reg_write_clk)
     );
 
     execute execute_instance (
@@ -96,7 +98,8 @@ module riscv
 
 		.valid(raw_valid_signal),
 		.inst(inst),
-		.inst_pc(inst_pc)
+		.inst_pc(inst_pc),
+		.reg_write_clk(reg_write_clk)
 	);
 
 	always_ff @(posedge clk or posedge rst) begin

@@ -38,7 +38,7 @@ module alu import common::*; (
             end
 
             7'b0011011: begin
-                u32 sign_extended_immed = {{20{immed[11]}}, immed};
+                word_t sign_extended_immed = {{52{immed[11]}}, immed};
                 u32 unextended_result;
 
                 case (funct3)

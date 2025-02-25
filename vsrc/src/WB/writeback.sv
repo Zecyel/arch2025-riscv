@@ -16,7 +16,9 @@ module writeback
     input logic clk,
     output bool valid,
     output inst_t inst,
-    output addr_t inst_pc
+    output addr_t inst_pc,
+
+    output bool reg_write_clk
 );
     always_comb begin
         reg_dest_addr = mem_wb_state.reg_dest_addr;
@@ -26,6 +28,7 @@ module writeback
         valid = mem_wb_state.inst_signal;
         inst = mem_wb_state.inst;
         inst_pc = mem_wb_state.inst_pc;
+        reg_write_clk = mem_wb_state.inst_signal;
     end
 
 endmodule
