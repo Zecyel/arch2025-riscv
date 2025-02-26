@@ -3,9 +3,9 @@
 
 `ifdef VERILATOR
 `include "include/common.sv"
+`include "src/riscv.sv"
 `endif
 
-`include "src/riscv.sv"
 
 module core import common::*; (
 	input  logic       clk, reset,

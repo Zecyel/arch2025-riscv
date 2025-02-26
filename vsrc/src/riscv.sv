@@ -1,14 +1,15 @@
 `ifndef __RISCV_SV
 `define __RISCV_SV
 
+`ifdef VERILATOR
 `include "include/common.sv"
 `include "include/temp_storage.sv"
-
 `include "src/IF/fetch.sv"
 `include "src/ID/decoder.sv"
 `include "src/EX/execute.sv"
 `include "src/MEM/memory.sv"
 `include "src/WB/writeback.sv"
+`endif
 
 module riscv
     import common::*;

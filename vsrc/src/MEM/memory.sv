@@ -1,8 +1,10 @@
 `ifndef __MEMORY_SV
 `define __MEMORY_SV
 
+`ifdef VERILATOR
 `include "include/common.sv"
 `include "include/temp_storage.sv"
+`endif
 
 module memory
     import common::*;

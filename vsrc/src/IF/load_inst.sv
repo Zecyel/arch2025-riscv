@@ -1,6 +1,10 @@
 `ifndef __LOAD_INST_SV
 `define __LOAD_INST_SV
 
+`ifdef VERILATOR
+`include "include/common.sv"
+`endif
+
 module load_inst import common::*; (
 	input ibus_resp_t iresp,
     input addr_t pc,

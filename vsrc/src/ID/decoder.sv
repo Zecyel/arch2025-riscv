@@ -1,9 +1,11 @@
 `ifndef __DECODER_SV
 `define __DECODER_SV
 
+`ifdef VERILATOR
 `include "include/common.sv"
 `include "src/ID/regs.sv"
 `include "src/ID/arith_decoder.sv"
+`endif
 
 module decoder
     import common::*;

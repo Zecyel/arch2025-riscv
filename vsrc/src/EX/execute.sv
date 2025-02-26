@@ -1,9 +1,11 @@
 `ifndef __EX_SV
 `define __EX_SV
 
+`ifdef VERILATOR
 `include "include/common.sv"
 `include "include/temp_storage.sv"
 `include "src/EX/alu.sv"
+`endif
 
 module execute
     import common::*;

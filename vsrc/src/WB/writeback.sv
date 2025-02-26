@@ -1,8 +1,10 @@
 `ifndef __WRITEBACK_SV
 `define __WRITEBACK_SV
 
+`ifdef VERILATOR
 `include "include/common.sv"
 `include "include/temp_storage.sv"
+`endif
 
 module writeback
     import common::*;

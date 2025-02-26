@@ -1,8 +1,10 @@
 `ifndef __ARITH_DECODER_SV
 `define __ARITH_DECODER_SV
 
+`ifdef VERILATOR
 `include "include/common.sv"
 `include "include/instruction.sv"
+`endif
 
 module arith_decoder
     import common::*;

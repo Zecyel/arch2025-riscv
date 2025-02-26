@@ -1,7 +1,9 @@
 `ifndef __ALU_SV
 `define __ALU_SV
 
+`ifdef VERILATOR
 `include "include/common.sv"
+`endif
 
 module alu import common::*; (
     input u12 immed,

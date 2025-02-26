@@ -1,7 +1,9 @@
 `ifndef __REG_SV
 `define __REG_SV
 
+`ifdef VERILATOR
 `include "include/common.sv"
+`endif
 
 module regs import common::*; (
     input reg_addr reg1_addr,

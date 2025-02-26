@@ -9,7 +9,6 @@
 
 import common::*;
 import instruction::*;
-
 package temp_storage;
 
     typedef struct packed {

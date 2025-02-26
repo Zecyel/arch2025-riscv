@@ -1,9 +1,11 @@
 `ifndef __FETCH_SV
 `define __FETCH_SV
 
+`ifdef VERILATOR
 `include "include/common.sv"
 `include "include/temp_storage.sv"
 `include "src/IF/load_inst.sv"
+`endif
 
 module fetch
     import common::*;
