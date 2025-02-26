@@ -19,9 +19,7 @@ module execute
         .immed(id_ex_state.immed),
         .reg1(id_ex_state.reg1_value),
         .reg2(id_ex_state.reg2_value),
-        .funct3(id_ex_state.funct3),
-        .funct7(id_ex_state.funct7),
-        .opcode(id_ex_state.opcode),
+        .op(id_ex_state.op),
         .result(ex_mem_state.alu_result)
     );
 

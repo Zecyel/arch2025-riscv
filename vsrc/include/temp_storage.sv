@@ -1,9 +1,15 @@
 `ifndef __TEMP_STORAGE_SV
 `define __TEMP_STORAGE_SV
 
+`ifdef VERILATOR
 `include "include/config.sv"
+`include "include/instruction.sv"
+`include "include/common.sv"
+`endif
 
 import common::*;
+import instruction::*;
+
 package temp_storage;
 
     typedef struct packed {
@@ -16,9 +22,8 @@ package temp_storage;
         word_t reg1_value;
         word_t reg2_value;
         u12 immed;
-        u3 funct3;
-        u7 funct7;
-        u7 opcode;
+        alu_operation op;
+        bool is_arith_inst; // reserved
 
         // Provide by Instruction Decoder
         // Injected by Write Back

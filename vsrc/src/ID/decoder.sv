@@ -3,6 +3,7 @@
 
 `include "include/common.sv"
 `include "src/ID/regs.sv"
+`include "src/ID/arith_decoder.sv"
 
 module decoder
     import common::*;
@@ -35,16 +36,14 @@ module decoder
         .reg2_value(id_ex_state.reg2_value)
     );
 
-    always_comb begin
-        id_ex_state.opcode = inst[6:0];
-        id_ex_state.funct3 = inst[14:12];
-        id_ex_state.funct7 = inst[31:25];
-        if (id_ex_state.opcode == 7'b0010011) begin
-            id_ex_state.immed = inst[31:20];
-        end else if (id_ex_state.opcode == 7'b0011011) begin
-            id_ex_state.immed = inst[31:20];
-        end
+    arith_decoder arith_decoder_inst (
+        .inst(inst),
+        .op(id_ex_state.op),
+        .immed(id_ex_state.immed),
+        .is_arith_inst(id_ex_state.is_arith_inst)
+    );
 
+    always_comb begin
         id_ex_state.reg_dest_addr = inst[11:7];
 
         id_ex_state.reg_write_enable = 1;
