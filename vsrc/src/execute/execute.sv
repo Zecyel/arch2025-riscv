@@ -4,17 +4,17 @@
 `ifdef VERILATOR
 `include "include/common.sv"
 `include "include/temp_storage.sv"
-`include "src/EX/alu.sv"
+`include "src/execute/alu.sv"
 `endif
 
 module execute
     import common::*;
     import temp_storage::*;
 (
-    input logic clk,
-
     input id_ex id_ex_state,
-    output ex_mem ex_mem_state
+    output ex_mem ex_mem_state,
+
+    output bool ok
 );
     
     alu alu_inst (
@@ -29,9 +29,12 @@ module execute
         ex_mem_state.reg_dest_addr = id_ex_state.reg_dest_addr;
         ex_mem_state.reg_write_enable = id_ex_state.reg_write_enable;
         
-        ex_mem_state.inst_signal = id_ex_state.inst_signal;
         ex_mem_state.inst = id_ex_state.inst;
         ex_mem_state.inst_pc = id_ex_state.inst_pc;
+
+        ex_mem_state.valid = id_ex_state.valid;
+
+        ok = 1;
     end
 
 endmodule

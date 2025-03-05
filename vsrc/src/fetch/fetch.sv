@@ -4,7 +4,7 @@
 `ifdef VERILATOR
 `include "include/common.sv"
 `include "include/temp_storage.sv"
-`include "src/IF/load_inst.sv"
+`include "src/fetch/load_inst.sv"
 `endif
 
 module fetch
@@ -19,7 +19,9 @@ module fetch
     input logic rst,
 
     output if_id if_id_state,
-    output bool awaiting
+    output bool ok,
+
+    input bool unified_ok
 );
 
     addr_t _pc;
@@ -33,20 +35,21 @@ module fetch
         .rst(rst),
         .inst(if_id_state.inst),
         .awaiting(waiting),
-        .inst_signal(if_id_state.inst_signal),
-        .inst_pc(if_id_state.inst_pc)
+        .inst_pc(if_id_state.inst_pc),
+
+        .valid(if_id_state.valid)
     );
 
-    always_ff @(posedge rst or negedge waiting) begin
+    always_ff @(posedge rst or posedge clk) begin
         if (rst) begin
             _pc <= PCINIT;
-        end else begin
+        end else if (! waiting) begin
             _pc <= _pc + 4;
         end
     end
 
     assign pc = _pc;
-    assign awaiting = waiting;
+    assign ok = ! waiting;
 
 endmodule
 

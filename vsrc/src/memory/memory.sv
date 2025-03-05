@@ -12,16 +12,21 @@ module memory
 (
     input logic clk,
     input ex_mem ex_mem_state,
-    output mem_wb mem_wb_state
+    output mem_wb mem_wb_state,
+
+    output bool ok
 );
     always_comb begin
         mem_wb_state.reg_dest_addr = ex_mem_state.reg_dest_addr;
         mem_wb_state.reg_write_enable = ex_mem_state.reg_write_enable;
         mem_wb_state.reg_write_data = ex_mem_state.alu_result;
         
-        mem_wb_state.inst_signal = ex_mem_state.inst_signal;
         mem_wb_state.inst = ex_mem_state.inst;
         mem_wb_state.inst_pc = ex_mem_state.inst_pc;
+
+        mem_wb_state.valid = ex_mem_state.valid;
+
+        ok = 1;
     end
 
 endmodule

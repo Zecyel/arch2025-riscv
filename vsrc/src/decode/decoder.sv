@@ -3,7 +3,7 @@
 
 `ifdef VERILATOR
 `include "include/common.sv"
-`include "src/ID/arith_decoder.sv"
+`include "src/decode/arith_decoder.sv"
 `endif
 
 module decoder
@@ -14,8 +14,7 @@ module decoder
     output id_ex id_ex_state,
 
     input word_t [31:0] regs_value,
-    input logic clk,
-    input logic rst
+    output bool ok
 );
 
     inst_t inst = if_id_state.inst;
@@ -35,9 +34,12 @@ module decoder
 
         id_ex_state.reg_write_enable = 1;
 
-        id_ex_state.inst_signal = if_id_state.inst_signal;
         id_ex_state.inst = if_id_state.inst;
         id_ex_state.inst_pc = if_id_state.inst_pc;
+
+        id_ex_state.valid = if_id_state.valid;
+
+        ok = 1;
     end
 
 endmodule

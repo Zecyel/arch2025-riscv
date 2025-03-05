@@ -7,11 +7,11 @@
 
 `include "src/regs.sv"
 
-`include "src/IF/fetch.sv"
-`include "src/ID/decoder.sv"
-`include "src/EX/execute.sv"
-`include "src/MEM/memory.sv"
-`include "src/WB/writeback.sv"
+`include "src/fetch/fetch.sv"
+`include "src/decode/decoder.sv"
+`include "src/execute/execute.sv"
+`include "src/memory/memory.sv"
+`include "src/writeback/writeback.sv"
 `endif
 
 module riscv
@@ -32,29 +32,30 @@ module riscv
     output bool reg_write_enable,
 	output reg_addr reg_dest_addr,
 	output word_t reg_write_data,
+
+	// output wb_commit wb_commit
 	output bool valid,
 	output inst_t inst,
 	output addr_t inst_pc
 );
 
-	regs regs_inst (
-		.clk(reg_write_clk),
-		.rst(rst),
-		.reg_write_enable(reg_write_enable),
-		.reg_dest_addr(reg_dest_addr),
-		.reg_write_data(reg_write_data),
-		.regs_value(regs)
-	);
-
 	if_id if_id_state, if_id_state_new;
 	id_ex id_ex_state, id_ex_state_new;
 	ex_mem ex_mem_state, ex_mem_state_new;
 	mem_wb mem_wb_state, mem_wb_state_new;
+	wb_commit wb_commit_state, wb_commit_state_new;
 
-	bool fetch_inst_awaiting;
+	bool fetch_ok, decoder_ok, execute_ok, memory_ok, writeback_ok;
+	bool unified_ok = fetch_ok & decoder_ok & execute_ok & memory_ok & writeback_ok;
 
-	bool awaiting = fetch_inst_awaiting;
-	bool reg_write_clk;
+	regs regs_inst (
+		.clk(clk),
+		.rst(rst),
+		.reg_write_enable(reg_write_enable & unified_ok),
+		.reg_dest_addr(reg_dest_addr),
+		.reg_write_data(reg_write_data),
+		.regs_value(regs)
+	);
 
     fetch fetch_instance (
 		.ireq(ireq),
@@ -63,53 +64,45 @@ module riscv
 		.clk(clk),
 		.rst(rst),
 		.if_id_state(if_id_state_new),
-		.awaiting(fetch_inst_awaiting)
+		
+		.ok(fetch_ok),
+		.unified_ok(unified_ok)
     );
 
     decoder decoder_instance (
-		// .clk(!awaiting ? clk : 0),
-		// .clk(clk),
-
 		.if_id_state(if_id_state),
 		.id_ex_state(id_ex_state_new),
-
 		.regs_value(regs),
-		.rst(rst),
-		.clk(reg_write_clk)
+
+		.ok(decoder_ok)
     );
 
     execute execute_instance (
-		// .clk(!awaiting ? clk : 0),
-		.clk(clk),
-
         .id_ex_state(id_ex_state),
-        .ex_mem_state(ex_mem_state_new)
+        .ex_mem_state(ex_mem_state_new),
+
+		.ok(execute_ok)
     );
 
 	memory memory_instance (
-		// .clk(!awaiting ? clk : 0),
 		.clk(clk),
 
 		.ex_mem_state(ex_mem_state),
-		.mem_wb_state(mem_wb_state_new)
+		.mem_wb_state(mem_wb_state_new),
+
+		.ok(memory_ok)
 	);
 
-	bool raw_valid_signal;
-	bool delayed_1_clock_valid_signal;
-
 	writeback writeback_instance (
-		// .clk(!awaiting ? clk : 0),
-		.clk(clk),
-
 		.mem_wb_state(mem_wb_state),
+		.wb_commit_state(wb_commit_state_new),
+
+		// do writeback
 		.reg_write_enable(reg_write_enable),
 		.reg_dest_addr(reg_dest_addr),
 		.reg_write_data(reg_write_data),
 
-		.valid(raw_valid_signal),
-		.inst(inst),
-		.inst_pc(inst_pc),
-		.reg_write_clk(reg_write_clk)
+		.ok(writeback_ok)
 	);
 
 	always_ff @(posedge clk or posedge rst) begin
@@ -118,16 +111,22 @@ module riscv
 			// take on springboot
 			// don't forget your redhat
 		end else begin
-			if_id_state <= if_id_state_new;
-			id_ex_state <= id_ex_state_new;
-			ex_mem_state <= ex_mem_state_new;
-			mem_wb_state <= mem_wb_state_new;
-
-			delayed_1_clock_valid_signal <= raw_valid_signal;
+			if (unified_ok) begin
+				if_id_state <= if_id_state_new;
+				id_ex_state <= id_ex_state_new;
+				ex_mem_state <= ex_mem_state_new;
+				mem_wb_state <= mem_wb_state_new;
+				wb_commit_state <= wb_commit_state_new;
+			end
 		end
 	end
 
-	assign valid = delayed_1_clock_valid_signal;
+	always_comb begin
+		valid = unified_ok & wb_commit_state.valid;
+		inst = wb_commit_state.inst;
+		inst_pc = wb_commit_state.inst_pc;
+	end
+
 
 endmodule
 

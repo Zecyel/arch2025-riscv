@@ -12,9 +12,10 @@ import instruction::*;
 package temp_storage;
 
     typedef struct packed {
-        bool inst_signal;
         inst_t inst;
         addr_t inst_pc;
+
+        bool valid;
     } if_id;
 
     typedef struct packed {
@@ -28,10 +29,11 @@ package temp_storage;
         // Injected by Write Back
         reg_addr reg_dest_addr;
         bool reg_write_enable;
-        
-        bool inst_signal;
+
         inst_t inst;
         addr_t inst_pc;
+
+        bool valid;
     } id_ex;
 
     typedef struct packed {
@@ -41,9 +43,10 @@ package temp_storage;
         reg_addr reg_dest_addr;
         bool reg_write_enable;
 
-        bool inst_signal;
         inst_t inst;
         addr_t inst_pc;
+        
+        bool valid;
     } ex_mem;
 
     typedef struct packed {
@@ -53,10 +56,22 @@ package temp_storage;
         reg_addr reg_dest_addr;
         bool reg_write_enable;
 
-        bool inst_signal;
         inst_t inst;
         addr_t inst_pc;
+
+        bool valid;
     } mem_wb;
+
+    typedef struct packed {
+        word_t reg_write_data;
+        reg_addr reg_dest_addr;
+        bool reg_write_enable;
+
+        inst_t inst;
+        addr_t inst_pc;
+
+        bool valid;
+    } wb_commit;
 
 
 endpackage
