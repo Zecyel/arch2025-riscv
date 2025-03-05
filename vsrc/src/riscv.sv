@@ -4,6 +4,9 @@
 `ifdef VERILATOR
 `include "include/common.sv"
 `include "include/temp_storage.sv"
+
+`include "src/regs.sv"
+
 `include "src/IF/fetch.sv"
 `include "src/ID/decoder.sv"
 `include "src/EX/execute.sv"
@@ -34,6 +37,15 @@ module riscv
 	output addr_t inst_pc
 );
 
+	regs regs_inst (
+		.clk(reg_write_clk),
+		.rst(rst),
+		.reg_write_enable(reg_write_enable),
+		.reg_dest_addr(reg_dest_addr),
+		.reg_write_data(reg_write_data),
+		.regs_value(regs)
+	);
+
 	if_id if_id_state, if_id_state_new;
 	id_ex id_ex_state, id_ex_state_new;
 	ex_mem ex_mem_state, ex_mem_state_new;
@@ -60,9 +72,6 @@ module riscv
 
 		.if_id_state(if_id_state),
 		.id_ex_state(id_ex_state_new),
-		.reg_write_enable(reg_write_enable),
-		.reg_dest_addr(reg_dest_addr),
-		.reg_write_data(reg_write_data),
 
 		.regs_value(regs),
 		.rst(rst),
