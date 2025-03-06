@@ -14,6 +14,10 @@ module execute
     input id_ex id_ex_state,
     output ex_mem ex_mem_state,
 
+    output reg_addr forward_reg_dest_addr,
+    output bool forward_reg_write_enable,
+    output word_t forward_reg_write_data,
+
     output bool ok
 );
     
@@ -33,6 +37,10 @@ module execute
         ex_mem_state.inst_pc = id_ex_state.inst_pc;
 
         ex_mem_state.valid = id_ex_state.valid;
+
+        forward_reg_dest_addr = id_ex_state.reg_dest_addr;
+        forward_reg_write_enable = id_ex_state.reg_write_enable;
+        forward_reg_write_data = ex_mem_state.alu_result;
 
         ok = 1;
     end

@@ -48,6 +48,10 @@ module riscv
 	bool fetch_ok, decoder_ok, execute_ok, memory_ok, writeback_ok;
 	bool unified_ok = fetch_ok & decoder_ok & execute_ok & memory_ok & writeback_ok;
 
+    reg_addr forward_reg_dest_addr;
+    bool forward_reg_write_enable;
+    word_t forward_reg_write_data;
+
 	regs regs_inst (
 		.clk(clk),
 		.rst(rst),
@@ -74,12 +78,20 @@ module riscv
 		.id_ex_state(id_ex_state_new),
 		.regs_value(regs),
 
+		.forward_reg_dest_addr(forward_reg_dest_addr),
+		.forward_reg_write_enable(forward_reg_write_enable),
+		.forward_reg_write_data(forward_reg_write_data),
+
 		.ok(decoder_ok)
     );
 
     execute execute_instance (
         .id_ex_state(id_ex_state),
         .ex_mem_state(ex_mem_state_new),
+
+		.forward_reg_dest_addr(forward_reg_dest_addr),
+		.forward_reg_write_enable(forward_reg_write_enable),
+		.forward_reg_write_data(forward_reg_write_data),
 
 		.ok(execute_ok)
     );

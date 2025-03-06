@@ -19,6 +19,10 @@ package temp_storage;
     } if_id;
 
     typedef struct packed {
+        // for forwarding
+        reg_addr reg1_addr;
+        reg_addr reg2_addr;
+
         word_t reg1_value;
         word_t reg2_value;
         u12 immed;
