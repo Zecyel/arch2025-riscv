@@ -4,22 +4,25 @@
 `ifdef VERILATOR
 `include "include/common.sv"
 `include "include/temp_storage.sv"
+`include "include/combined_wire.sv"
 `endif
 
 module memory
     import common::*;
     import temp_storage::*;
+    import combined_wire::*;
 (
     input logic clk,
     input ex_mem ex_mem_state,
     output mem_wb mem_wb_state,
 
+    output reg_writer forward,
+
     output bool ok
 );
     always_comb begin
-        mem_wb_state.reg_dest_addr = ex_mem_state.reg_dest_addr;
-        mem_wb_state.reg_write_enable = ex_mem_state.reg_write_enable;
-        mem_wb_state.reg_write_data = ex_mem_state.alu_result;
+        mem_wb_state.writer = ex_mem_state.writer;
+        forward = ex_mem_state.writer;
         
         mem_wb_state.inst = ex_mem_state.inst;
         mem_wb_state.inst_pc = ex_mem_state.inst_pc;

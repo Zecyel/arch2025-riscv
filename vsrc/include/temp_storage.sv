@@ -5,10 +5,12 @@
 `include "include/config.sv"
 `include "include/instruction.sv"
 `include "include/common.sv"
+`include "include/combined_wire.sv"
 `endif
 
 import common::*;
 import instruction::*;
+import combined_wire::*;
 package temp_storage;
 
     typedef struct packed {
@@ -29,10 +31,7 @@ package temp_storage;
         alu_operation op;
         bool is_arith_inst; // reserved
 
-        // Provide by Instruction Decoder
-        // Injected by Write Back
-        reg_addr reg_dest_addr;
-        bool reg_write_enable;
+        reg_writer writer;
 
         inst_t inst;
         addr_t inst_pc;
@@ -41,11 +40,7 @@ package temp_storage;
     } id_ex;
 
     typedef struct packed {
-        word_t alu_result;
-
-        // pass down 
-        reg_addr reg_dest_addr;
-        bool reg_write_enable;
+        reg_writer writer;
 
         inst_t inst;
         addr_t inst_pc;
@@ -54,11 +49,7 @@ package temp_storage;
     } ex_mem;
 
     typedef struct packed {
-        word_t reg_write_data;
-
-        // pass down
-        reg_addr reg_dest_addr;
-        bool reg_write_enable;
+        reg_writer writer;
 
         inst_t inst;
         addr_t inst_pc;
@@ -67,9 +58,7 @@ package temp_storage;
     } mem_wb;
 
     typedef struct packed {
-        word_t reg_write_data;
-        reg_addr reg_dest_addr;
-        bool reg_write_enable;
+        reg_writer writer;
 
         inst_t inst;
         addr_t inst_pc;

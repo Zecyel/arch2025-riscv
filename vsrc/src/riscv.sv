@@ -4,6 +4,7 @@
 `ifdef VERILATOR
 `include "include/common.sv"
 `include "include/temp_storage.sv"
+`include "include/combined_wire.sv"
 
 `include "src/regs.sv"
 
@@ -17,6 +18,7 @@
 module riscv
     import common::*;
     import temp_storage::*;
+	import combined_wire::*;
 (
     // cpu basics
     input logic clk,
@@ -48,16 +50,16 @@ module riscv
 	bool fetch_ok, decoder_ok, execute_ok, memory_ok, writeback_ok;
 	bool unified_ok = fetch_ok & decoder_ok & execute_ok & memory_ok & writeback_ok;
 
-    reg_addr forward_reg_dest_addr;
-    bool forward_reg_write_enable;
-    word_t forward_reg_write_data;
+	reg_writer forward_ex_id, forward_mem_id;
+
+	reg_writer writeback_writer;
 
 	regs regs_inst (
 		.clk(clk),
 		.rst(rst),
-		.reg_write_enable(reg_write_enable & unified_ok),
-		.reg_dest_addr(reg_dest_addr),
-		.reg_write_data(reg_write_data),
+		.reg_write_enable(writeback_writer.reg_write_enable & unified_ok),
+		.reg_dest_addr(writeback_writer.reg_dest_addr),
+		.reg_write_data(writeback_writer.reg_write_data),
 		.regs_value(regs)
 	);
 
@@ -78,9 +80,9 @@ module riscv
 		.id_ex_state(id_ex_state_new),
 		.regs_value(regs),
 
-		.forward_reg_dest_addr(forward_reg_dest_addr),
-		.forward_reg_write_enable(forward_reg_write_enable),
-		.forward_reg_write_data(forward_reg_write_data),
+		.forward1(forward_ex_id),
+		.forward2(forward_mem_id),
+		.forward3(writeback_writer),
 
 		.ok(decoder_ok)
     );
@@ -89,9 +91,7 @@ module riscv
         .id_ex_state(id_ex_state),
         .ex_mem_state(ex_mem_state_new),
 
-		.forward_reg_dest_addr(forward_reg_dest_addr),
-		.forward_reg_write_enable(forward_reg_write_enable),
-		.forward_reg_write_data(forward_reg_write_data),
+		.forward(forward_ex_id),
 
 		.ok(execute_ok)
     );
@@ -102,6 +102,8 @@ module riscv
 		.ex_mem_state(ex_mem_state),
 		.mem_wb_state(mem_wb_state_new),
 
+		.forward(forward_mem_id),
+
 		.ok(memory_ok)
 	);
 
@@ -109,10 +111,7 @@ module riscv
 		.mem_wb_state(mem_wb_state),
 		.wb_commit_state(wb_commit_state_new),
 
-		// do writeback
-		.reg_write_enable(reg_write_enable),
-		.reg_dest_addr(reg_dest_addr),
-		.reg_write_data(reg_write_data),
+		.writer(writeback_writer),
 
 		.ok(writeback_ok)
 	);

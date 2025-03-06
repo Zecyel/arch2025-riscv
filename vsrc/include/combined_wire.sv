@@ -1,5 +1,5 @@
-`ifndef __TEMP_STORAGE_SV
-`define __TEMP_STORAGE_SV
+`ifndef __COMBINED_WIRE_SV
+`define __COMBINED_WIRE_SV
 
 `ifdef VERILATOR
 `include "include/config.sv"
@@ -7,7 +7,7 @@
 `endif
 
 import common::*;
-package wiring;
+package combined_wire;
 
     typedef struct packed {
         reg_addr reg_dest_addr;
