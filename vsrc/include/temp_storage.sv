@@ -27,9 +27,9 @@ package temp_storage;
 
         word_t reg1_value;
         word_t reg2_value;
-        u12 immed;
-        alu_operation op;
-        bool is_arith_inst; // reserved
+        word_t immed; // sign extended
+        
+        instruction_type op;
 
         reg_writer writer;
 

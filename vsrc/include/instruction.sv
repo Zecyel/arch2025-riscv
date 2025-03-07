@@ -8,11 +8,13 @@
 import common::*;
 package instruction;
 
+    // all supported instructions
     typedef enum { 
         ADD, SUB, AND, OR, XOR,
         ADDI, XORI, ORI, ANDI,
-        ADDIW, ADDW, SUBW
-    } alu_operation;
+        ADDIW, ADDW, SUBW,
+        LUI, AUIPC
+    } instruction_type;
 
 endpackage
 

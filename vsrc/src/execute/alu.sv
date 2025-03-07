@@ -6,17 +6,15 @@
 `endif
 
 module alu import common::*; (
-    input u12 immed,
-    
     input word_t reg1,
     input word_t reg2,
+    input word_t immed,
 
-    input alu_operation op,
+    input instruction_type op,
 
     output word_t result
 );
     always_comb begin
-        word_t sign_extended_immed = {{52{immed[11]}}, immed};
 
         unique case (op)
             ADD: result = reg1 + reg2;
@@ -24,10 +22,10 @@ module alu import common::*; (
             AND: result = reg1 & reg2;
             OR: result = reg1 | reg2;
             XOR: result = reg1 ^ reg2;
-            ADDI: result = reg1 + sign_extended_immed;
-            XORI: result = reg1 ^ sign_extended_immed;
-            ORI: result = reg1 | sign_extended_immed;
-            ANDI: result = reg1 & sign_extended_immed;
+            ADDI: result = reg1 + immed;
+            XORI: result = reg1 ^ immed;
+            ORI: result = reg1 | immed;
+            ANDI: result = reg1 & immed;
             ADDW: begin
                 u32 unextended_result = $signed(reg1[31:0] + reg2[31:0]);
                 result = {{32{unextended_result[31]}}, unextended_result};
@@ -37,9 +35,12 @@ module alu import common::*; (
                 result = {{32{unextended_result[31]}}, unextended_result};
             end
             ADDIW: begin
-                u32 unextended_result = $signed(reg1[31:0] + sign_extended_immed[31:0]);
+                u32 unextended_result = $signed(reg1[31:0] + immed[31:0]);
                 result = {{32{unextended_result[31]}}, unextended_result};
             end
+            LUI: result = immed;
+
+            default: begin end
         endcase
 
     end

@@ -11,18 +11,14 @@ module arith_decoder
     import instruction::*;
 (
     input inst_t inst,
-    output alu_operation op,
-    output u12 immed,
-    output bool is_arith_inst
+    output instruction_type op,
+    output word_t immed
 );
     u7 opcode;
     u3 funct3;
     u7 funct7;
 
     always_comb begin
-        immed = inst[31:20];
-
-        is_arith_inst = 1; // in lab1
 
         opcode = inst[6:0];
         funct3 = inst[14:12];
@@ -49,6 +45,15 @@ module arith_decoder
                 'h000: op = ADDW;
                 'h020: op = SUBW;
             endcase
+            7'b0110111: op = LUI;
+            7'b0010111: op = AUIPC;
+            default: begin end
+        endcase
+
+        unique case (op)
+            ADD, SUB, AND, OR, XOR, ADDW, SUBW: immed = 0;
+            ADDI, XORI, ORI, ANDI, ADDIW: immed = { {52{inst[31]}}, inst[31:20] };
+            LUI, AUIPC: immed = { {32{inst[31]}}, inst[31:12], 12'b0 };
             default: begin end
         endcase
 

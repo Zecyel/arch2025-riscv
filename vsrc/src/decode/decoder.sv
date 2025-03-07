@@ -29,8 +29,7 @@ module decoder
     arith_decoder arith_decoder_inst (
         .inst(inst),
         .op(id_ex_state.op),
-        .immed(id_ex_state.immed),
-        .is_arith_inst(id_ex_state.is_arith_inst)
+        .immed(id_ex_state.immed)
     );
 
     always_comb begin
