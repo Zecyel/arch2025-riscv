@@ -6,6 +6,7 @@
 `include "include/temp_storage.sv"
 `include "include/combined_wire.sv"
 `include "src/decode/arith_decoder.sv"
+`include "src/decode/parse_operation.sv"
 `endif
 
 module decoder
@@ -25,11 +26,19 @@ module decoder
 );
 
     inst_t inst = if_id_state.inst;
+    instruction_type op;
+    parse_operation parse_operation_inst (
+        .inst(inst),
+        .op(op)
+    );
 
     arith_decoder arith_decoder_inst (
         .inst(inst),
-        .op(id_ex_state.op),
-        .immed(id_ex_state.immed)
+        .op(op),
+        .immed(id_ex_state.immed),
+
+        .reg_dest_addr(id_ex_state.writer.reg_dest_addr),
+        .reg_write_enable(id_ex_state.writer.reg_write_enable)
     );
 
     always_comb begin
@@ -49,9 +58,9 @@ module decoder
         id_ex_state.writer.reg_dest_addr = inst[11:7];
         id_ex_state.writer.reg_write_enable = 1;
 
+        id_ex_state.op = op;
         id_ex_state.inst = if_id_state.inst;
         id_ex_state.inst_pc = if_id_state.inst_pc;
-
         id_ex_state.valid = if_id_state.valid;
 
         ok = 1;

@@ -11,44 +11,13 @@ module arith_decoder
     import instruction::*;
 (
     input inst_t inst,
-    output instruction_type op,
-    output word_t immed
+    input instruction_type op,
+    output word_t immed,
+
+    output reg_addr reg_dest_addr,
+    output bool reg_write_enable
 );
-    u7 opcode;
-    u3 funct3;
-    u7 funct7;
-
     always_comb begin
-
-        opcode = inst[6:0];
-        funct3 = inst[14:12];
-        funct7 = inst[31:25];
-
-        unique case (opcode)
-            7'b0110011: case ({1'b0, funct3, 1'b0, funct7})
-                'h000: op = ADD;
-                'h020: op = SUB;
-                'h700: op = AND;
-                'h600: op = OR;
-                'h400: op = XOR;
-            endcase
-            7'b0010011: case (funct3)
-                'h0: op = ADDI;
-                'h4: op = XORI;
-                'h6: op = ORI;
-                'h7: op = ANDI;
-            endcase
-            7'b0011011: case (funct3)
-                'h0: op = ADDIW;
-            endcase
-            7'b0111011: case ({1'b0, funct3, 1'b0, funct7})
-                'h000: op = ADDW;
-                'h020: op = SUBW;
-            endcase
-            7'b0110111: op = LUI;
-            7'b0010111: op = AUIPC;
-            default: begin end
-        endcase
 
         unique case (op)
             ADD, SUB, AND, OR, XOR, ADDW, SUBW: immed = 0;
@@ -56,6 +25,14 @@ module arith_decoder
             LUI, AUIPC: immed = { {32{inst[31]}}, inst[31:12], 12'b0 };
             default: begin end
         endcase
+
+        unique case (op)
+            ADD, SUB, AND, OR, XOR, ADDI, XORI, ORI, ANDI, ADDIW, ADDW, SUBW: reg_write_enable = 1;
+            LUI, AUIPC: reg_write_enable = 0;
+            default: begin end
+        endcase
+
+        reg_dest_addr = inst[11:7];
 
     end
 
