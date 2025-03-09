@@ -14,7 +14,6 @@ module arith_decoder
     input instruction_type op,
     output word_t immed,
 
-    output reg_addr reg_dest_addr,
     output bool reg_write_enable
 );
     always_comb begin
@@ -27,12 +26,9 @@ module arith_decoder
         endcase
 
         unique case (op)
-            ADD, SUB, AND, OR, XOR, ADDI, XORI, ORI, ANDI, ADDIW, ADDW, SUBW: reg_write_enable = 1;
-            LUI, AUIPC: reg_write_enable = 0;
+            ADD, SUB, AND, OR, XOR, ADDI, XORI, ORI, ANDI, ADDIW, ADDW, SUBW, LUI: reg_write_enable = 1;
             default: begin end
         endcase
-
-        reg_dest_addr = inst[11:7];
 
     end
 

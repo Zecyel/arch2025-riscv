@@ -36,8 +36,6 @@ module decoder
         .inst(inst),
         .op(op),
         .immed(id_ex_state.immed),
-
-        .reg_dest_addr(id_ex_state.writer.reg_dest_addr),
         .reg_write_enable(id_ex_state.writer.reg_write_enable)
     );
 
@@ -45,6 +43,7 @@ module decoder
 
         id_ex_state.reg1_addr = inst[19:15];
         id_ex_state.reg2_addr = inst[24:20];
+        id_ex_state.writer.reg_dest_addr = inst[11:7];
 
         id_ex_state.reg1_value = forward1.reg_write_enable && forward1.reg_dest_addr != 0 && forward1.reg_dest_addr == inst[19:15] ? forward1.reg_write_data :
                                  forward2.reg_write_enable && forward2.reg_dest_addr != 0 && forward2.reg_dest_addr == inst[19:15] ? forward2.reg_write_data :
@@ -54,9 +53,6 @@ module decoder
                                  forward2.reg_write_enable && forward2.reg_dest_addr != 0 && forward2.reg_dest_addr == inst[24:20] ? forward2.reg_write_data :
                                  forward3.reg_write_enable && forward3.reg_dest_addr != 0 && forward3.reg_dest_addr == inst[24:20] ? forward3.reg_write_data :
                                  regs_value[inst[24:20]];
-
-        id_ex_state.writer.reg_dest_addr = inst[11:7];
-        id_ex_state.writer.reg_write_enable = 1;
 
         id_ex_state.op = op;
         id_ex_state.inst = if_id_state.inst;
