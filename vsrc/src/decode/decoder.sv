@@ -5,8 +5,8 @@
 `include "include/common.sv"
 `include "include/temp_storage.sv"
 `include "include/combined_wire.sv"
-`include "src/decode/arith_decoder.sv"
 `include "src/decode/parse_operation.sv"
+`include "src/decode/parse_immed.sv"
 `endif
 
 module decoder
@@ -27,23 +27,25 @@ module decoder
 
     inst_t inst = if_id_state.inst;
     instruction_type op;
+    word_t immed;
+
     parse_operation parse_operation_inst (
         .inst(inst),
         .op(op)
     );
 
-    arith_decoder arith_decoder_inst (
+    parse_immed parse_immed_inst (
         .inst(inst),
-        .op(op),
-        .immed(id_ex_state.immed),
-        .reg_write_enable(id_ex_state.writer.reg_write_enable)
+        .immed(immed)
     );
 
     always_comb begin
 
         id_ex_state.reg1_addr = inst[19:15];
         id_ex_state.reg2_addr = inst[24:20];
+        id_ex_state.immed = immed;
         id_ex_state.writer.reg_dest_addr = inst[11:7];
+        id_ex_state.writer.reg_write_enable = 1;
 
         id_ex_state.reg1_value = forward1.reg_write_enable && forward1.reg_dest_addr != 0 && forward1.reg_dest_addr == inst[19:15] ? forward1.reg_write_data :
                                  forward2.reg_write_enable && forward2.reg_dest_addr != 0 && forward2.reg_dest_addr == inst[19:15] ? forward2.reg_write_data :
