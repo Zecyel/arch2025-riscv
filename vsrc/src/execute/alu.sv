@@ -38,6 +38,9 @@ module alu import common::*; (
                 u32 unextended_result = $signed(reg1[31:0] + immed[31:0]);
                 result = {{32{unextended_result[31]}}, unextended_result};
             end
+
+            LD, LB, LH, LW, LBU, LHU, LWU, SD, SB, SH, SW: result = reg1 + immed;
+
             LUI: result = immed;
 
             default: begin end

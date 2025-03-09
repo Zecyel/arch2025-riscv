@@ -1,12 +1,12 @@
-`ifndef __PARSE_OPERATION_SV
-`define __PARSE_OPERATION_SV
+`ifndef __PARSE_INSTRUCTION_SV
+`define __PARSE_INSTRUCTION_SV
 
 `ifdef VERILATOR
 `include "include/common.sv"
 `include "include/instruction.sv"
 `endif
 
-module parse_operation
+module parse_instruction
     import common::*;
     import instruction::*;
 (
