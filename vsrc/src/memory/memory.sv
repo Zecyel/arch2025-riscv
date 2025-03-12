@@ -35,7 +35,9 @@ module memory
     );
 
     bool mem_read;
-    bool mem_write = memory_enable & !mem_read;
+    bool mem_write;
+    
+    assign mem_write = memory_enable & !mem_read;
 
     is_memory_read is_memory_read_inst (
         .op(ex_mem_state.op),
@@ -78,6 +80,7 @@ module memory
         mem_wb_state.inst_pc = ex_mem_state.inst_pc;
 
         mem_wb_state.valid = ex_mem_state.valid;
+        mem_wb_state.op = ex_mem_state.op;
 
         ok = ! waiting;
     end

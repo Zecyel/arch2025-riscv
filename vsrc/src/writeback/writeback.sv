@@ -20,7 +20,7 @@ module writeback
 );
 
     is_write_reg is_write_reg_inst (
-        .op(mem_wb_state.inst),
+        .op(mem_wb_state.op),
         .write_reg(wb_commit_state.writer.reg_write_enable)
     );
 

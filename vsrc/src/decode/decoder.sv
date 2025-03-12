@@ -39,11 +39,6 @@ module decoder
         .immed(id_ex_state.immed)
     );
 
-    // is_write_reg is_write_reg_inst (
-    //     .op(op),
-    //     .write_reg(id_ex_state.writer.reg_write_enable)
-    // );
-
     always_comb begin
 
         id_ex_state.reg1_addr = inst[19:15];

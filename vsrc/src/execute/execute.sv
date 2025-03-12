@@ -48,6 +48,7 @@ module execute
 
         ex_mem_state.alu_result = alu_result;
         ex_mem_state.write_mem_data = id_ex_state.reg2_value;
+        ex_mem_state.op = id_ex_state.op;
 
         ok = 1;
     end

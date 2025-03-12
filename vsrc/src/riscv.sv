@@ -50,18 +50,26 @@ module riscv
 	wb_commit wb_commit_state, wb_commit_state_new;
 
 	bool fetch_ok, decoder_ok, execute_ok, memory_ok, writeback_ok;
-	bool unified_ok = fetch_ok & decoder_ok & execute_ok & memory_ok & writeback_ok;
+	bool unified_ok;
+	
+	assign unified_ok = fetch_ok & decoder_ok & execute_ok & memory_ok & writeback_ok;
 
 	reg_writer forward_ex_id, forward_mem_id;
 
 	reg_writer writeback_writer;
 
+	always_comb begin
+		reg_write_enable = writeback_writer.reg_write_enable & unified_ok;
+		reg_dest_addr = writeback_writer.reg_dest_addr;
+		reg_write_data = writeback_writer.reg_write_data;
+	end
+
 	regs regs_inst (
 		.clk(clk),
 		.rst(rst),
-		.reg_write_enable(writeback_writer.reg_write_enable & unified_ok),
-		.reg_dest_addr(writeback_writer.reg_dest_addr),
-		.reg_write_data(writeback_writer.reg_write_data),
+		.reg_write_enable(reg_write_enable),
+		.reg_dest_addr(reg_dest_addr),
+		.reg_write_data(reg_write_data),
 		.regs_value(regs)
 	);
 
