@@ -21,7 +21,7 @@ module read_align
      * It should be handled by the compiler
      */
     
-    u64 unextended_data;
+    word_t unextended_data; // stupid latch
 
     always_comb begin
         case (size)
@@ -44,12 +44,12 @@ module read_align
                     : { {32{unextended_data[31]}}, unextended_data[31:0] };
             end
             MSIZE8: begin
-                unextended_data = data;
+                unextended_data = data; // stupid latch
                 raw_data = data;
             end
             default: begin
-                unextended_data = 64'h1919810;
-                raw_data = 64'h114514;
+                unextended_data = 64'h1919810; // stupid latch
+                raw_data = 64'h114514; // stupid typechecker
             end
         endcase
     end
@@ -80,7 +80,7 @@ module write_align
             MSIZE2: data = raw_data << (8 * addr[2:0]);
             MSIZE4: data = raw_data << (8 * addr[2:0]);
             MSIZE8: data = raw_data;
-            default: data = 64'h114514;
+            default: data = 64'h114514; // stupid typechecker
         endcase
     end
 
