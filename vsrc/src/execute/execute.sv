@@ -6,6 +6,7 @@
 `include "include/temp_storage.sv"
 `include "include/combined_wire.sv"
 `include "src/execute/alu.sv"
+`include "src/decode/instruction_util.sv"
 `endif
 
 module execute
@@ -31,17 +32,22 @@ module execute
         .result(alu_result)
     );
 
+    is_arith is_arith_inst (
+        .op(id_ex_state.op),
+        .arith(forward.reg_write_enable)
+    );
+
     always_comb begin        
         ex_mem_state.inst = id_ex_state.inst;
         ex_mem_state.inst_pc = id_ex_state.inst_pc;
 
         ex_mem_state.valid = id_ex_state.valid;
 
-        forward.reg_dest_addr = id_ex_state.writer.reg_dest_addr;
-        forward.reg_write_enable = id_ex_state.writer.reg_write_enable;
+        forward.reg_dest_addr = id_ex_state.inst[11:7];
         forward.reg_write_data = alu_result;
 
-        ex_mem_state.writer = forward;
+        ex_mem_state.alu_result = alu_result;
+        ex_mem_state.write_mem_data = id_ex_state.reg2_value;
 
         ok = 1;
     end

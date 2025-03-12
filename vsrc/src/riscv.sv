@@ -27,6 +27,8 @@ module riscv
     // bus signals
 	output ibus_req_t ireq,
 	input ibus_resp_t iresp,
+	output dbus_req_t dreq,
+	input dbus_resp_t dresp,
 
     // for DiffTest
     output word_t pc,
@@ -71,8 +73,7 @@ module riscv
 		.rst(rst),
 		.if_id_state(if_id_state_new),
 		
-		.ok(fetch_ok),
-		.unified_ok(unified_ok)
+		.ok(fetch_ok)
     );
 
     decoder decoder_instance (
@@ -98,7 +99,10 @@ module riscv
 
 	memory memory_instance (
 		.clk(clk),
+		.rst(rst),
 
+		.dreq(dreq),
+		.dresp(dresp),
 		.ex_mem_state(ex_mem_state),
 		.mem_wb_state(mem_wb_state_new),
 
@@ -111,7 +115,7 @@ module riscv
 		.mem_wb_state(mem_wb_state),
 		.wb_commit_state(wb_commit_state_new),
 
-		.writer(writeback_writer),
+		.forward(writeback_writer),
 
 		.ok(writeback_ok)
 	);

@@ -19,9 +19,7 @@ module fetch
     input logic rst,
 
     output if_id if_id_state,
-    output bool ok,
-
-    input bool unified_ok
+    output bool ok
 );
 
     addr_t _pc;

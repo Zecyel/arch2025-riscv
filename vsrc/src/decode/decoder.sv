@@ -39,16 +39,15 @@ module decoder
         .immed(id_ex_state.immed)
     );
 
-    is_write_reg is_write_reg_inst (
-        .op(op),
-        .is_write(id_ex_state.writer.reg_write_enable)
-    );
+    // is_write_reg is_write_reg_inst (
+    //     .op(op),
+    //     .write_reg(id_ex_state.writer.reg_write_enable)
+    // );
 
     always_comb begin
 
         id_ex_state.reg1_addr = inst[19:15];
         id_ex_state.reg2_addr = inst[24:20];
-        id_ex_state.writer.reg_dest_addr = inst[11:7];
 
         id_ex_state.reg1_value = forward1.reg_write_enable && forward1.reg_dest_addr != 0 && forward1.reg_dest_addr == inst[19:15] ? forward1.reg_write_data :
                                  forward2.reg_write_enable && forward2.reg_dest_addr != 0 && forward2.reg_dest_addr == inst[19:15] ? forward2.reg_write_data :

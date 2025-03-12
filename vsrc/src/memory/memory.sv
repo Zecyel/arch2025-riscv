@@ -5,6 +5,8 @@
 `include "include/common.sv"
 `include "include/temp_storage.sv"
 `include "include/combined_wire.sv"
+`include "src/memory/visit_memory.sv"
+`include "src/decode/instruction_util.sv"
 `endif
 
 module memory
@@ -13,6 +15,9 @@ module memory
     import combined_wire::*;
 (
     input logic clk,
+    input logic rst,
+    output dbus_req_t dreq,
+    input dbus_resp_t dresp,
     input ex_mem ex_mem_state,
     output mem_wb mem_wb_state,
 
@@ -20,16 +25,61 @@ module memory
 
     output bool ok
 );
+
+    bool waiting, memory_enable;
+    word_t data;
+
+    is_memory is_memory_util (
+        .op(ex_mem_state.op),
+        .memory(memory_enable)
+    );
+
+    bool mem_read;
+    bool mem_write = memory_enable & !mem_read;
+
+    is_memory_read is_memory_read_inst (
+        .op(ex_mem_state.op),
+        .memory_read(mem_read)
+    );
+
+    visit_memory visit_memory_inst (
+        .clk(clk),
+        .rst(rst),
+        .enable(memory_enable),
+        .dreq(dreq),
+        .dresp(dresp),
+        .op(ex_mem_state.op),
+        .addr(ex_mem_state.alu_result),
+        .write_mem_data(ex_mem_state.write_mem_data),
+        .read_mem_data(data),
+        .awaiting(waiting)
+    );
+
     always_comb begin
-        mem_wb_state.writer = ex_mem_state.writer;
-        forward = ex_mem_state.writer;
+        if (! mem_read && ! mem_write) begin
+            // memory irrelevant, passdown alu value
+            mem_wb_state.value = ex_mem_state.alu_result;
+
+            // in lab2, only mem & arith
+            forward.reg_write_enable = 1; // TODO: Modify in lab3
+            forward.reg_write_data = ex_mem_state.alu_result;
+            forward.reg_dest_addr = ex_mem_state.inst[11:7];
+        end else if (mem_read) begin
+            mem_wb_state.value = data;
+
+            forward.reg_write_enable = 1;
+            forward.reg_write_data = data;
+            forward.reg_dest_addr = ex_mem_state.inst[11:7];
+        end else begin
+            forward.reg_write_enable = 0;
+        end
         
         mem_wb_state.inst = ex_mem_state.inst;
         mem_wb_state.inst_pc = ex_mem_state.inst_pc;
 
         mem_wb_state.valid = ex_mem_state.valid;
 
-        ok = 1;
+        ok = ! waiting;
     end
 
 endmodule

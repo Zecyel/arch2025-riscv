@@ -52,6 +52,8 @@ module core import common::*; (
 		// bus signals
 		.ireq(ireq),
 		.iresp(iresp),
+		.dreq(dreq),
+		.dresp(dresp),
 
 		// for DiffTest
 		.pc(pc), // the pc of to-be-executed instruction
