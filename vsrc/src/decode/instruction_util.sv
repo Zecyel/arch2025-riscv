@@ -47,7 +47,8 @@ module is_arith
             ADDI, XORI, ORI, ANDI,
             SLLI, SRLI, SRAI, SLTI, SLTIU,
             ADDIW, ADDW, SUBW,
-            SLLIW, SRLIW, SRAIW, SLLW, SRLW, SRAW: arith = 1;
+            SLLIW, SRLIW, SRAIW, SLLW, SRLW, SRAW,
+            LUI: arith = 1;
 
             default: arith = 0;
         endcase

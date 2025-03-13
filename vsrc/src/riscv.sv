@@ -79,6 +79,7 @@ module riscv
 		.pc(pc),
 		.clk(clk),
 		.rst(rst),
+		.enable(unified_ok),
 		.if_id_state(if_id_state_new),
 		
 		.ok(fetch_ok)
@@ -108,7 +109,7 @@ module riscv
 	memory memory_instance (
 		.clk(clk),
 		.rst(rst),
-
+		.enable(unified_ok),
 		.dreq(dreq),
 		.dresp(dresp),
 		.ex_mem_state(ex_mem_state),

@@ -16,6 +16,8 @@ module memory
 (
     input logic clk,
     input logic rst,
+    input logic enable,
+
     output dbus_req_t dreq,
     input dbus_resp_t dresp,
     input ex_mem ex_mem_state,
@@ -48,6 +50,7 @@ module memory
         .clk(clk),
         .rst(rst),
         .enable(memory_enable),
+        .unified_ok(enable),
         .dreq(dreq),
         .dresp(dresp),
         .op(ex_mem_state.op),

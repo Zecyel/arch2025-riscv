@@ -17,6 +17,7 @@ module fetch
     output addr_t pc,
     input logic clk,
     input logic rst,
+    input bool enable,
 
     output if_id if_id_state,
     output bool ok
@@ -31,6 +32,7 @@ module fetch
         .pc(_pc),
         .clk(clk),
         .rst(rst),
+        .enable(enable),
         .inst(if_id_state.inst),
         .awaiting(waiting),
         .inst_pc(if_id_state.inst_pc),
@@ -41,7 +43,7 @@ module fetch
     always_ff @(posedge rst or posedge clk) begin
         if (rst) begin
             _pc <= PCINIT;
-        end else if (! waiting) begin
+        end else if (! waiting & enable) begin
             _pc <= _pc + 4;
         end
     end

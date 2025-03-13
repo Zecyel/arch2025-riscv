@@ -10,6 +10,7 @@ module load_inst import common::*; (
     input addr_t pc,
     input logic clk,
     input logic rst,
+    input logic enable,
 
 	output ibus_req_t ireq,
     output inst_t inst,
@@ -30,7 +31,7 @@ module load_inst import common::*; (
             inst_pc <= PCINIT;
             last_pc <= PCINIT;
             valid <= 0;
-        end else if (! waiting) begin
+        end else if (! waiting & enable) begin
             // send the request
             ireq.valid <= 1;
             ireq.addr <= pc;

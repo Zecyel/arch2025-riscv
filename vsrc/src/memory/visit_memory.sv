@@ -13,7 +13,8 @@ module visit_memory
 (
     input logic clk,
     input logic rst,
-    input logic enable,
+    input bool enable,
+    input bool unified_ok,
 
     output dbus_req_t dreq,
     input dbus_resp_t dresp,
@@ -33,24 +34,33 @@ module visit_memory
     msize_t size;
     strobe_t strobe;
     word_t data, readout_data;
+
+    bool cur_mem_op_started;
     
     always_ff @(posedge clk or posedge rst) begin
         if (rst) begin
             waiting <= 0;
             dreq.valid <= 0;
-        end else if (! waiting & enable) begin
-            waiting <= 1;
-            dreq.addr <= addr;
-            dreq.size <= size;
-            dreq.strobe <= strobe;
-            dreq.data <= data;
-            dreq.valid <= 1;
-            last_addr <= addr;
-            last_op <= op;
-        end else if (dresp.addr_ok & dresp.data_ok) begin
-            dreq.valid <= 0;
-            waiting <= 0;
-            readout_data <= dreq.data;
+        end else begin
+            if (unified_ok) begin
+                cur_mem_op_started <= 0;
+            end
+            if (! waiting & enable & ! cur_mem_op_started) begin
+                waiting <= 1;
+                dreq.addr <= addr;
+                dreq.size <= size;
+                dreq.strobe <= strobe;
+                dreq.data <= data;
+                dreq.valid <= 1;
+                cur_mem_op_started <= 1;
+
+                last_addr <= addr;
+                last_op <= op;
+            end else if (dresp.addr_ok & dresp.data_ok & cur_mem_op_started) begin
+                readout_data <= dresp.data;
+                waiting <= 0;
+                dreq.valid <= 0;
+            end
         end
     end
 

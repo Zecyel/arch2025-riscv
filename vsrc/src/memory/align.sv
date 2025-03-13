@@ -71,8 +71,16 @@ module write_align
      * It should be handled by the compiler
      */
 
+    u8 mask;
+
     always_comb begin
-        u8 mask = (2 << size) - 1;
+        case (size)
+            MSIZE1: mask = 1;
+            MSIZE2: mask = 3;
+            MSIZE4: mask = 15;
+            MSIZE8: mask = 255;
+            default: mask = 255; // stupid typechecker
+        endcase
         strobe = mask << addr[2:0];
 
         case (size)
