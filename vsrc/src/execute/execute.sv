@@ -18,16 +18,29 @@ module execute
     output ex_mem ex_mem_state,
 
     output reg_writer forward,
+    input reg_writer forward1,
+    input reg_writer forward2,
 
     output bool ok
 );
     
     word_t alu_result;
 
+    word_t reg1, reg2;
+
+    always_comb begin
+        reg1 = forward1.reg_write_enable && forward1.reg_dest_addr != 0 && forward1.reg_dest_addr == id_ex_state.reg1_addr ? forward1.reg_write_data :
+               forward2.reg_write_enable && forward2.reg_dest_addr != 0 && forward2.reg_dest_addr == id_ex_state.reg1_addr ? forward2.reg_write_data :
+               id_ex_state.reg1_value;
+        reg2 = forward1.reg_write_enable && forward1.reg_dest_addr != 0 && forward1.reg_dest_addr == id_ex_state.reg2_addr ? forward1.reg_write_data :
+               forward2.reg_write_enable && forward2.reg_dest_addr != 0 && forward2.reg_dest_addr == id_ex_state.reg2_addr ? forward2.reg_write_data :
+               id_ex_state.reg2_value;
+    end
+
     alu alu_inst (
         .immed(id_ex_state.immed),
-        .reg1(id_ex_state.reg1_value),
-        .reg2(id_ex_state.reg2_value),
+        .reg1(reg1),
+        .reg2(reg2),
         .op(id_ex_state.op),
         .result(alu_result)
     );
@@ -37,7 +50,7 @@ module execute
         .arith(forward.reg_write_enable)
     );
 
-    always_comb begin        
+    always_comb begin
         ex_mem_state.inst = id_ex_state.inst;
         ex_mem_state.inst_pc = id_ex_state.inst_pc;
 

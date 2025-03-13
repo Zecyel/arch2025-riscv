@@ -54,14 +54,14 @@ module riscv
 	
 	assign unified_ok = fetch_ok & decoder_ok & execute_ok & memory_ok & writeback_ok;
 
-	reg_writer forward_ex_id, forward_mem_id;
+	reg_writer ex_forward, mem_forward;
 
-	reg_writer writeback_writer;
+	reg_writer wb_forward;
 
 	always_comb begin
-		reg_write_enable = writeback_writer.reg_write_enable & unified_ok;
-		reg_dest_addr = writeback_writer.reg_dest_addr;
-		reg_write_data = writeback_writer.reg_write_data;
+		reg_write_enable = wb_forward.reg_write_enable & unified_ok;
+		reg_dest_addr = wb_forward.reg_dest_addr;
+		reg_write_data = wb_forward.reg_write_data;
 	end
 
 	regs regs_inst (
@@ -90,9 +90,9 @@ module riscv
 		.id_ex_state(id_ex_state_new),
 		.regs_value(regs),
 
-		.forward1(forward_ex_id),
-		.forward2(forward_mem_id),
-		.forward3(writeback_writer),
+		.forward1(ex_forward),
+		.forward2(mem_forward),
+		.forward3(wb_forward),
 
 		.ok(decoder_ok)
     );
@@ -101,7 +101,9 @@ module riscv
         .id_ex_state(id_ex_state),
         .ex_mem_state(ex_mem_state_new),
 
-		.forward(forward_ex_id),
+		.forward(ex_forward),
+		.forward1(mem_forward),
+		.forward2(wb_forward),
 
 		.ok(execute_ok)
     );
@@ -115,7 +117,7 @@ module riscv
 		.ex_mem_state(ex_mem_state),
 		.mem_wb_state(mem_wb_state_new),
 
-		.forward(forward_mem_id),
+		.forward(mem_forward),
 
 		.ok(memory_ok)
 	);
@@ -124,7 +126,7 @@ module riscv
 		.mem_wb_state(mem_wb_state),
 		.wb_commit_state(wb_commit_state_new),
 
-		.forward(writeback_writer),
+		.forward(wb_forward),
 
 		.ok(writeback_ok)
 	);
