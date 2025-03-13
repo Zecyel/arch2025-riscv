@@ -13,6 +13,7 @@
 `include "src/execute/execute.sv"
 `include "src/memory/memory.sv"
 `include "src/writeback/writeback.sv"
+`include "src/commit/commit.sv"
 `endif
 
 module riscv
@@ -54,9 +55,7 @@ module riscv
 	
 	assign unified_ok = fetch_ok & decoder_ok & execute_ok & memory_ok & writeback_ok;
 
-	reg_writer ex_forward, mem_forward;
-
-	reg_writer wb_forward;
+	reg_writer ex_forward, mem_forward, wb_forward;
 
 	always_comb begin
 		reg_write_enable = wb_forward.reg_write_enable & unified_ok;
@@ -131,6 +130,14 @@ module riscv
 		.ok(writeback_ok)
 	);
 
+	commit commit_instance (
+		.wb_commit_state(wb_commit_state),
+		.enable(unified_ok),
+		.valid(valid),
+		.inst(inst),
+		.inst_pc(inst_pc)
+	);
+
 	always_ff @(posedge clk or posedge rst) begin
 		if (rst) begin
 			// drink a cup of java ( also try brew! )
@@ -146,13 +153,6 @@ module riscv
 			end
 		end
 	end
-
-	always_comb begin
-		valid = unified_ok & wb_commit_state.valid;
-		inst = wb_commit_state.inst;
-		inst_pc = wb_commit_state.inst_pc;
-	end
-
 
 endmodule
 
