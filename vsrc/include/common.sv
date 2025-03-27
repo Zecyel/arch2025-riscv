@@ -6,40 +6,40 @@
 
 import config_pkg::*;
 package common;
-	// parameters
-	import config_pkg::*;
-	parameter XLEN = 64;
-	parameter MXLEN = XLEN;
-	parameter LINK_REG_ID = 1;
-	parameter logic[63:0] PCINIT = 64'h00000000_80000000;
+    // parameters
+    import config_pkg::*;
+    parameter XLEN = 64;
+    parameter MXLEN = XLEN;
+    parameter LINK_REG_ID = 1;
+    parameter logic[63:0] PCINIT = 64'h00000000_80000000;
 
-	// typedefs
-	typedef logic[127:0] u128;
-	typedef logic[63:0] u64;
-	typedef logic[43:0] u44;
-	typedef logic[31:0] u32;
-	typedef logic[19:0] u20;
-	typedef logic[15:0] u16;
-	typedef logic[14:0] u15;
-	typedef logic[13:0] u14;
-	typedef logic[12:0] u13;
-	typedef logic[11:0] u12;
-	typedef logic[10:0] u11;
-	typedef logic[9:0]  u10;
-	typedef logic[8:0]  u9;
-	typedef logic[7:0]  u8;
-	typedef logic[6:0]  u7;
-	typedef logic[5:0]  u6;
-	typedef logic[4:0]  u5;
-	typedef logic[3:0]  u4;
-	typedef logic[2:0]  u3;
-	typedef logic[1:0]  u2;
-	typedef logic 	    u1;
+    // typedefs
+    typedef logic[127:0] u128;
+    typedef logic[63:0] u64;
+    typedef logic[43:0] u44;
+    typedef logic[31:0] u32;
+    typedef logic[19:0] u20;
+    typedef logic[15:0] u16;
+    typedef logic[14:0] u15;
+    typedef logic[13:0] u14;
+    typedef logic[12:0] u13;
+    typedef logic[11:0] u12;
+    typedef logic[10:0] u11;
+    typedef logic[9:0]  u10;
+    typedef logic[8:0]  u9;
+    typedef logic[7:0]  u8;
+    typedef logic[6:0]  u7;
+    typedef logic[5:0]  u6;
+    typedef logic[4:0]  u5;
+    typedef logic[3:0]  u4;
+    typedef logic[2:0]  u3;
+    typedef logic[1:0]  u2;
+    typedef logic         u1;
 
-	typedef u5 creg_addr_t;
-	// typedef u64 word_t;
-	typedef u8 strobe_t;
-	typedef u12 csr_addr_t;
+    typedef u5 creg_addr_t;
+    // typedef u64 word_t;
+    typedef u8 strobe_t;
+    typedef u12 csr_addr_t;
 
 /**
  * this file contains basic definitions and typedefs for general designs.
@@ -136,10 +136,10 @@ typedef enum i8 {
 } mlen_t;
 
 parameter mlen_t AXI_BURST_LEN = AXI_BURST_NUM == 16 ? MLEN16 :
- 							     AXI_BURST_NUM == 32 ? MLEN32 :
-							     AXI_BURST_NUM == 64 ? MLEN64 :
-							     AXI_BURST_NUM == 128 ? MLEN128 :
-							     AXI_BURST_NUM == 256 ? MLEN256 : MLEN1;
+                                  AXI_BURST_NUM == 32 ? MLEN32 :
+                                 AXI_BURST_NUM == 64 ? MLEN64 :
+                                 AXI_BURST_NUM == 128 ? MLEN128 :
+                                 AXI_BURST_NUM == 256 ? MLEN256 : MLEN1;
 
 /**
  * SOME NOTES ON BUSES

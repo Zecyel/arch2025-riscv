@@ -6,13 +6,13 @@
 `endif
 
 module load_inst import common::*; (
-	input ibus_resp_t iresp,
+    input ibus_resp_t iresp,
     input addr_t pc,
     input logic clk,
     input logic rst,
     input logic enable,
 
-	output ibus_req_t ireq,
+    output ibus_req_t ireq,
     output inst_t inst,
     output bool awaiting,
     output addr_t inst_pc,
