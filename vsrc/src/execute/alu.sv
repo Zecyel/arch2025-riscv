@@ -57,7 +57,41 @@ module alu import common::*; (
             end
 
             BEQ, BNE, BLT, BGE, BLTU, BGEU: new_pc = pc + immed;
+            SLL: result = reg1 << reg2;
+            SRL: result = reg1 >> reg2;
+            SRA: result = $signed(reg1) >>> reg2;
+            SLLI: result = reg1 << immed[4:0];
+            SRLI: result = reg1 >> immed[4:0];
+            SRAI: result = $signed(reg1) >>> immed[4:0];
+            SLT: result = $signed(reg1) < $signed(reg2) ? 1 : 0;
+            SLTI: result = $signed(reg1) < $signed(immed) ? 1 : 0;
+            SLTU: result = reg1 < reg2 ? 1 : 0;
+            SLTIU: result = reg1 < immed ? 1 : 0;
 
+            SLLW: begin
+                u32 unextended_result = reg1[31:0] << reg2[4:0];
+                result = {{32{unextended_result[31]}}, unextended_result};
+            end
+            SRLW: begin
+                u32 unextended_result = reg1[31:0] >> reg2[4:0];
+                result = {{32{unextended_result[31]}}, unextended_result};
+            end
+            SRAW: begin
+                u32 unextended_result = $signed(reg1[31:0]) >>> reg2[4:0];
+                result = {{32{unextended_result[31]}}, unextended_result};
+            end
+            SLLIW: begin
+                u32 unextended_result = reg1[31:0] << immed[4:0];
+                result = {{32{unextended_result[31]}}, unextended_result};
+            end
+            SRLIW: begin
+                u32 unextended_result = reg1[31:0] >> immed[4:0];
+                result = {{32{unextended_result[31]}}, unextended_result};
+            end
+            SRAIW: begin
+                u32 unextended_result = $signed(reg1[31:0]) >>> immed[4:0];
+                result = {{32{unextended_result[31]}}, unextended_result};
+            end
 
             default: begin end
         endcase
