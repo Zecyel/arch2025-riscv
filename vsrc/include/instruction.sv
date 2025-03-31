@@ -9,7 +9,8 @@ import common::*;
 package instruction;
 
     // all supported instructions
-    typedef enum { 
+    typedef enum {
+        NOP, // dummy value
         ADD, SUB, XOR, OR, AND,
         SLL, SRL, SRA, SLT, SLTU,
         ADDI, XORI, ORI, ANDI,

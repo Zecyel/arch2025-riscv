@@ -56,6 +56,66 @@ module is_arith
 
 endmodule
 
+module is_stall
+// also includes interruption
+// stall module to be done
+    import common::*;
+    import instruction::*;
+(
+    input instruction_type op,
+    output bool stall
+);
+
+    always_comb begin
+        case (op)
+            BEQ, BNE, BLT, BGE, BLTU, BGEU, JAL, JALR: stall = 1;
+
+            default: stall = 0;
+        endcase
+    end
+
+endmodule
+
+module is_stall_plain
+// also includes interruption
+// stall module to be done
+    import common::*;
+    import instruction::*;
+(
+    input inst_t inst,
+    output bool stall
+);
+
+    always_comb begin
+        case (inst[6:0])
+            7'b1100011: stall = 1; // branch instructions
+            7'b1101111: stall = 1; // jal
+            7'b1100111: stall = 1; // jalr
+            7'b1110011: stall = 1; // ecall, ebreak
+            default: stall = 0;
+        endcase
+    end
+
+endmodule
+
+module is_jump
+    import common::*;
+    import instruction::*;
+(
+    input instruction_type op,
+    output bool jump
+);
+
+    always_comb begin
+        case (op)
+            BEQ, BNE, BLT, BGE, BLTU, BGEU, JAL, JALR: jump = 1;
+
+            default: jump = 0;
+        endcase
+    end
+
+endmodule
+
 module is_memory
     import common::*;
     import instruction::*;

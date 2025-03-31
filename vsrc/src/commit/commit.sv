@@ -10,18 +10,34 @@ module commit
     import common::*;
     import temp_storage::*;
 (
+    input logic clk,
+    input logic rst,
     input wb_commit wb_commit_state,
-    input logic enable,
 
     output logic valid,
     output inst_t inst,
-    output addr_t inst_pc
+    output addr_t inst_pc,
+    output jump_writer jump,
+
+    output bool ok
 );
 
+    word_t last_inst_counter;
+
+    always_ff @(posedge clk or posedge rst) begin
+        if (rst) begin
+            last_inst_counter <= 0;
+        end else begin
+            last_inst_counter <= wb_commit_state.inst_counter;
+        end
+    end
+
     always_comb begin
-        valid = wb_commit_state.valid & enable;
+        ok = last_inst_counter == wb_commit_state.inst_counter;
         inst = wb_commit_state.inst;
         inst_pc = wb_commit_state.inst_pc;
+        valid = last_inst_counter != wb_commit_state.inst_counter;
+        jump = wb_commit_state.jump;
     end
 
 endmodule

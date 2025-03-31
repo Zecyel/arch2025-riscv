@@ -57,6 +57,7 @@ module decoder
         id_ex_state.inst = if_id_state.inst;
         id_ex_state.inst_pc = if_id_state.inst_pc;
         id_ex_state.valid = if_id_state.valid;
+        id_ex_state.inst_counter = if_id_state.inst_counter;
 
         ok = 1;
     end

@@ -35,6 +35,7 @@ module parse_instruction
                 'h520: op = SRA; 
                 'h200: op = SLT; 
                 'h300: op = SLTU;
+                default: op = NOP;
             endcase
 
             7'b0010011: case (funct3)
@@ -46,12 +47,14 @@ module parse_instruction
                 'h5: if (funct7 == 'h00) op = SRLI; else if (funct7 == 'h20) op = SRAI;
                 'h2: op = SLTI;
                 'h3: op = SLTIU;
+                default: op = NOP;
             endcase
 
             7'b0011011: case (funct3)
                 'h0: op = ADDIW;
                 'h1: if (funct7 == 'h00) op = SLLIW;
                 'h5: if (funct7 == 'h00) op = SRLIW; else if (funct7 == 'h20) op = SRAIW;
+                default: op = NOP;
             endcase
             
             7'b0111011: case ({1'b0, funct3, 1'b0, funct7})
@@ -60,6 +63,7 @@ module parse_instruction
                 'h100: op = SLLW;
                 'h500: op = SRLW;
                 'h520: op = SRAW;
+                default: op = NOP;
             endcase
 
             7'b0000011: case (funct3)
@@ -70,6 +74,7 @@ module parse_instruction
                 'h4: op = LBU;
                 'h5: op = LHU;
                 'h6: op = LWU;
+                default: op = NOP;
             endcase
 
             7'b0100011: case (funct3)
@@ -77,6 +82,7 @@ module parse_instruction
                 'h1: op = SH;
                 'h2: op = SW;
                 'h3: op = SD;
+                default: op = NOP;
             endcase
 
             7'b1100011: case (funct3)
@@ -86,6 +92,7 @@ module parse_instruction
                 'h5: op = BGE;
                 'h6: op = BLTU;
                 'h7: op = BGEU;
+                default: op = NOP;
             endcase
 
             7'b1101111: op = JAL;
@@ -94,7 +101,7 @@ module parse_instruction
             7'b0110111: op = LUI;
             7'b0010111: op = AUIPC;
 
-            default: begin end
+            default: op = NOP;
         endcase
 
     end

@@ -17,6 +17,8 @@ package temp_storage;
         inst_t inst;
         addr_t inst_pc;
         bool valid;
+
+        word_t inst_counter;
     } if_id;
 
     typedef struct packed {
@@ -32,33 +34,44 @@ package temp_storage;
         inst_t inst;
         addr_t inst_pc;
         bool valid;
+
+        word_t inst_counter;
     } id_ex;
 
     typedef struct packed {
         word_t alu_result;
         word_t write_mem_data;
 
+        jump_writer jump;
         instruction_type op;
         inst_t inst;
         addr_t inst_pc;
         bool valid;
+
+        word_t inst_counter;
     } ex_mem;
 
     typedef struct packed {
         word_t value; // from alu or memory
 
+        jump_writer jump;
         instruction_type op;
         inst_t inst;
         addr_t inst_pc;
         bool valid;
+
+        word_t inst_counter;
     } mem_wb;
 
     typedef struct packed {
         reg_writer writer; // for difftest
 
+        jump_writer jump;
         inst_t inst;
         addr_t inst_pc;
         bool valid;
+        
+        word_t inst_counter;
     } wb_commit;
 
 

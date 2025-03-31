@@ -4,7 +4,6 @@
 `ifdef VERILATOR
 `include "include/common.sv"
 `include "include/temp_storage.sv"
-`include "src/fetch/load_inst.sv"
 `endif
 
 module fetch
@@ -19,6 +18,8 @@ module fetch
     input logic rst,
     input bool enable,
 
+    input jump_writer jump,
+
     output if_id if_id_state,
     output bool ok
 );
@@ -26,25 +27,68 @@ module fetch
     addr_t _pc;
     bool waiting;
 
-    load_inst load_inst_inst (
-        .ireq(ireq),
-        .iresp(iresp),
-        .pc(_pc),
-        .clk(clk),
-        .rst(rst),
-        .enable(enable),
-        .inst(if_id_state.inst),
-        .awaiting(waiting),
-        .inst_pc(if_id_state.inst_pc),
+    addr_t last_pc;
+    bool stall;
 
-        .valid(if_id_state.valid)
-    );
+    word_t inst_counter;
+    word_t jmp_awokener;
 
-    always_ff @(posedge rst or posedge clk) begin
+    always_ff @(posedge clk or posedge rst) begin
         if (rst) begin
+            // reset the state
             _pc <= PCINIT;
+            waiting <= 0;
+            last_pc <= PCINIT;
+            stall <= 0;
+            ireq.valid <= 0;
+            ireq.addr <= 'h0000_0000;
+            if_id_state.inst <= 'h0000_0000;
+            if_id_state.inst_pc <= PCINIT;
+            if_id_state.valid <= 1;
+
+            inst_counter <= 0;
         end else if (! waiting & enable) begin
-            _pc <= _pc + 4;
+            if (! stall || jump.jump_inst && jump.inst_counter == jmp_awokener) begin
+                stall <= 0; // clear the stall flag
+                if (jump.do_jump & jump.jump_inst) begin
+                    // jump to the target addr
+                    _pc <= jump.dest_addr;
+
+                    // send the request
+                    ireq.valid <= 1;
+                    ireq.addr <= jump.dest_addr;
+                    waiting <= 1;
+                    last_pc <= jump.dest_addr;
+                    if_id_state.valid <= 0;
+                end else begin
+                    // send the request
+                    ireq.valid <= 1;
+                    ireq.addr <= _pc;
+                    waiting <= 1;
+                    last_pc <= _pc;
+                    if_id_state.valid <= 0;
+
+                    // increase the PC
+                    _pc <= _pc + 4;
+                end
+            end else begin
+                // awaiting for the stall flag
+                // ignore the instruction bus
+            end
+        end else if (iresp.addr_ok & iresp.data_ok) begin 
+            inst_counter <= inst_counter + 1;
+
+            ireq.valid <= 0;
+            if_id_state.inst <= iresp.data;
+
+            if (iresp.data[6:0] == 7'b1100011 || iresp.data[6:0] == 7'b1101111 || iresp.data[6:0] == 7'b1100111) begin
+                stall <= 1; // stall the next instruction
+                jmp_awokener <= inst_counter + 1;
+            end
+            if_id_state.inst_pc <= last_pc;
+            waiting <= 0;
+            if_id_state.valid <= 1;
+            if_id_state.inst_counter <= inst_counter + 1;
         end
     end
 

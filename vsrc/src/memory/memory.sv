@@ -84,6 +84,8 @@ module memory
 
         mem_wb_state.valid = ex_mem_state.valid;
         mem_wb_state.op = ex_mem_state.op;
+        mem_wb_state.jump = ex_mem_state.jump;
+        mem_wb_state.inst_counter = ex_mem_state.inst_counter;
 
         ok = ! waiting;
     end

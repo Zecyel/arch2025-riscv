@@ -50,12 +50,13 @@ module riscv
     mem_wb mem_wb_state, mem_wb_state_new;
     wb_commit wb_commit_state, wb_commit_state_new;
 
-    bool fetch_ok, decoder_ok, execute_ok, memory_ok, writeback_ok;
+    bool fetch_ok, decoder_ok, execute_ok, memory_ok, writeback_ok, commit_ok;
     bool unified_ok;
     
-    assign unified_ok = fetch_ok & decoder_ok & execute_ok & memory_ok & writeback_ok;
+    assign unified_ok = fetch_ok & decoder_ok & execute_ok & memory_ok & writeback_ok & commit_ok;
 
     reg_writer ex_forward, mem_forward, wb_forward;
+    jump_writer jump;
 
     always_comb begin
         reg_write_enable = wb_forward.reg_write_enable & unified_ok;
@@ -80,7 +81,8 @@ module riscv
         .rst(rst),
         .enable(unified_ok),
         .if_id_state(if_id_state_new),
-        
+        .jump(jump),
+
         .ok(fetch_ok)
     );
 
@@ -131,11 +133,15 @@ module riscv
     );
 
     commit commit_instance (
+        .clk(clk),
+        .rst(rst),
         .wb_commit_state(wb_commit_state),
-        .enable(unified_ok),
         .valid(valid),
         .inst(inst),
-        .inst_pc(inst_pc)
+        .inst_pc(inst_pc),
+        .jump(jump),
+
+        .ok(commit_ok)
     );
 
     always_ff @(posedge clk or posedge rst) begin

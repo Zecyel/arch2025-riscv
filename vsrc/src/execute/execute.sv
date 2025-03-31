@@ -6,6 +6,7 @@
 `include "include/temp_storage.sv"
 `include "include/combined_wire.sv"
 `include "src/execute/alu.sv"
+`include "src/execute/jump_judge.sv"
 `include "src/decode/instruction_util.sv"
 `endif
 
@@ -36,15 +37,25 @@ module execute
                forward2.reg_write_enable && forward2.reg_dest_addr != 0 && forward2.reg_dest_addr == id_ex_state.reg2_addr ? forward2.reg_write_data :
                id_ex_state.reg2_value;
     end
+    
+    jump_judge jump_judge_inst (
+        .op(id_ex_state.op),
+        .reg1(reg1),
+        .reg2(reg2),
+        .do_jump(ex_mem_state.jump.do_jump)
+    );
 
-    addr_t new_pc;
+    is_jump is_jump_inst (
+        .op(id_ex_state.op),
+        .jump(ex_mem_state.jump.jump_inst)
+    );
 
     alu alu_inst (
         .immed(id_ex_state.immed),
         .reg1(reg1),
         .reg2(reg2),
         .pc(id_ex_state.inst_pc),
-        .new_pc(new_pc),
+        .new_pc(ex_mem_state.jump.dest_addr),
         .op(id_ex_state.op),
         .result(alu_result)
     );
@@ -66,7 +77,8 @@ module execute
         ex_mem_state.alu_result = alu_result;
         ex_mem_state.write_mem_data = id_ex_state.reg2_value;
         ex_mem_state.op = id_ex_state.op;
-
+        ex_mem_state.inst_counter = id_ex_state.inst_counter;
+        ex_mem_state.jump.inst_counter = id_ex_state.inst_counter;
         ok = 1;
     end
 
