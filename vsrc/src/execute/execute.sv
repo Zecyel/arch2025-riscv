@@ -37,10 +37,14 @@ module execute
                id_ex_state.reg2_value;
     end
 
+    addr_t new_pc;
+
     alu alu_inst (
         .immed(id_ex_state.immed),
         .reg1(reg1),
         .reg2(reg2),
+        .pc(id_ex_state.inst_pc),
+        .new_pc(new_pc),
         .op(id_ex_state.op),
         .result(alu_result)
     );

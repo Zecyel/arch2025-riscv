@@ -9,7 +9,9 @@ module alu import common::*; (
     input word_t reg1,
     input word_t reg2,
     input word_t immed,
-
+    
+    input addr_t pc, // for auipc, bxx, jalr, jal, etc.
+    output addr_t new_pc,
     input instruction_type op,
 
     output word_t result
@@ -42,6 +44,20 @@ module alu import common::*; (
             LD, LB, LH, LW, LBU, LHU, LWU, SD, SB, SH, SW: result = reg1 + immed;
 
             LUI: result = immed;
+            AUIPC: result = pc + immed;
+
+            JAL: begin
+                result = pc + 4;
+                new_pc = pc + immed;
+            end
+
+            JALR: begin
+                result = pc + 4;
+                new_pc = reg1 + immed;
+            end
+
+            BEQ, BNE, BLT, BGE, BLTU, BGEU: new_pc = pc + immed;
+
 
             default: begin end
         endcase
