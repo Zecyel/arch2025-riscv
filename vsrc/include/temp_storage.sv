@@ -61,6 +61,7 @@ package temp_storage;
         bool valid;
 
         word_t inst_counter;
+        bool difftest_skip;
     } mem_wb;
 
     typedef struct packed {
@@ -71,6 +72,7 @@ package temp_storage;
         addr_t inst_pc;
         bool valid;
         
+        bool difftest_skip;
         word_t inst_counter;
     } wb_commit;
 

@@ -33,8 +33,8 @@ module writeback
         wb_commit_state.inst_pc = mem_wb_state.inst_pc;
         wb_commit_state.valid = mem_wb_state.valid;
         wb_commit_state.jump = mem_wb_state.jump;
+        wb_commit_state.difftest_skip = mem_wb_state.difftest_skip;
         wb_commit_state.inst_counter = mem_wb_state.inst_counter;
-        
         ok = 1;
     end
 

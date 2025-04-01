@@ -41,7 +41,9 @@ module riscv
     // output wb_commit wb_commit
     output bool valid,
     output inst_t inst,
-    output addr_t inst_pc
+    output addr_t inst_pc,
+
+    output bool difftest_skip
 );
 
     if_id if_id_state, if_id_state_new;
@@ -140,6 +142,7 @@ module riscv
         .inst(inst),
         .inst_pc(inst_pc),
         .jump(jump),
+        .difftest_skip(difftest_skip),
 
         .ok(commit_ok)
     );

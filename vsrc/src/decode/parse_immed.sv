@@ -46,9 +46,9 @@ module parse_immed
             R_TYPE: immed = 0;
             I_TYPE: immed = { {52{inst[31]}}, inst[31:20] };
             S_TYPE: immed = { {52{inst[31]}}, inst[31:25], inst[11:7] };
-            B_TYPE: immed = { {52{inst[31]}}, inst[31], inst[7], inst[30:25], inst[11:8] };
+            B_TYPE: immed = { {51{inst[31]}}, inst[31], inst[7], inst[30:25], inst[11:8], 1'b0 };
             U_TYPE: immed = { {32{inst[31]}}, inst[31:12], 12'b0 };
-            J_TYPE: immed = { {44{inst[31]}}, inst[31], inst[19:12], inst[20], inst[30:21] };
+            J_TYPE: immed = { {43{inst[31]}}, inst[31], inst[19:12], inst[20], inst[30:21], 1'b0 };
         endcase
     end
 

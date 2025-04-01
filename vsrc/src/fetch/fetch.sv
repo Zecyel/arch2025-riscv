@@ -36,9 +36,9 @@ module fetch
     always_ff @(posedge clk or posedge rst) begin
         if (rst) begin
             // reset the state
-            _pc <= PCINIT;
+            _pc <= PCINIT - 4;
             waiting <= 0;
-            last_pc <= PCINIT;
+            last_pc <= PCINIT - 4;
             stall <= 0;
             ireq.valid <= 0;
             ireq.addr <= 'h0000_0000;
@@ -63,9 +63,9 @@ module fetch
                 end else begin
                     // send the request
                     ireq.valid <= 1;
-                    ireq.addr <= _pc;
+                    ireq.addr <= _pc + 4;
                     waiting <= 1;
-                    last_pc <= _pc;
+                    last_pc <= _pc + 4;
                     if_id_state.valid <= 0;
 
                     // increase the PC
@@ -74,6 +74,8 @@ module fetch
             end else begin
                 // awaiting for the stall flag
                 // ignore the instruction bus
+                if_id_state.valid <= 0;
+                if_id_state.inst <= 0;
             end
         end else if (iresp.addr_ok & iresp.data_ok) begin 
             inst_counter <= inst_counter + 1;
@@ -84,6 +86,8 @@ module fetch
             if (iresp.data[6:0] == 7'b1100011 || iresp.data[6:0] == 7'b1101111 || iresp.data[6:0] == 7'b1100111) begin
                 stall <= 1; // stall the next instruction
                 jmp_awokener <= inst_counter + 1;
+            end else begin
+                stall <= 0;
             end
             if_id_state.inst_pc <= last_pc;
             waiting <= 0;

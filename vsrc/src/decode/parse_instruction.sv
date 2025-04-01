@@ -43,8 +43,8 @@ module parse_instruction
                 'h4: op = XORI;
                 'h6: op = ORI;
                 'h7: op = ANDI;
-                'h1: if (funct7 == 'h00) op = SLLI;
-                'h5: if (funct7 == 'h00) op = SRLI; else if (funct7 == 'h20) op = SRAI;
+                'h1: if (funct7[6:3] == 'h0) op = SLLI;
+                'h5: if (funct7[6:3] == 'h0) op = SRLI; else if (funct7[6:3] == 'h4) op = SRAI;
                 'h2: op = SLTI;
                 'h3: op = SLTIU;
                 default: op = NOP;

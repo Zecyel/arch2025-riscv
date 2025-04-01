@@ -60,13 +60,17 @@ module memory
         .awaiting(waiting)
     );
 
+    is_write_reg is_write_reg_inst (
+        .op(ex_mem_state.op),
+        .write_reg(forward.reg_write_enable)
+    );
+
     always_comb begin
         if (! mem_read && ! mem_write) begin
             // memory irrelevant, passdown alu value
             mem_wb_state.value = ex_mem_state.alu_result;
 
-            // in lab2, only mem & arith
-            forward.reg_write_enable = 1; // TODO: Modify in lab3
+            // forward.reg_write_enable = 1;
             forward.reg_write_data = ex_mem_state.alu_result;
             forward.reg_dest_addr = ex_mem_state.inst[11:7];
         end else if (mem_read) begin
@@ -88,6 +92,7 @@ module memory
         mem_wb_state.inst_counter = ex_mem_state.inst_counter;
 
         ok = ! waiting;
+        mem_wb_state.difftest_skip = (mem_read || mem_write) && ex_mem_state.alu_result[31] == 0;
     end
 
 endmodule

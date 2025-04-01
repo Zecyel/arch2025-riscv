@@ -29,6 +29,8 @@ module core import common::*; (
     
     logic manual_reset_signal;
     bool reseted;
+
+    bool difftest_skip;
     
     always_ff @(posedge reset or posedge clk) begin
         if (reset) begin
@@ -63,7 +65,9 @@ module core import common::*; (
         .reg_write_data(reg_write_data),
         .valid(valid),
         .inst(inst),
-        .inst_pc(inst_pc) // the pc of the finished instruction
+        .inst_pc(inst_pc), // the pc of the finished instruction
+
+        .difftest_skip(difftest_skip)
     );
 
 `ifdef VERILATOR
@@ -74,7 +78,7 @@ module core import common::*; (
         .valid              (valid),
         .pc                 (inst_pc),
         .instr              (inst),
-        .skip               (0),
+        .skip               (difftest_skip),
         .isRVC              (0),
         .scFailed           (0),
         .wen                (reg_write_enable),

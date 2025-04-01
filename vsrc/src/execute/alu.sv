@@ -57,12 +57,12 @@ module alu import common::*; (
             end
 
             BEQ, BNE, BLT, BGE, BLTU, BGEU: new_pc = pc + immed;
-            SLL: result = reg1 << reg2;
-            SRL: result = reg1 >> reg2;
-            SRA: result = $signed(reg1) >>> reg2;
-            SLLI: result = reg1 << immed[4:0];
-            SRLI: result = reg1 >> immed[4:0];
-            SRAI: result = $signed(reg1) >>> immed[4:0];
+            SLL: result = reg1 << reg2[5:0];
+            SRL: result = reg1 >> reg2[5:0];
+            SRA: result = $signed(reg1) >>> reg2[5:0];
+            SLLI: result = reg1 << immed[5:0];
+            SRLI: result = reg1 >> immed[5:0];
+            SRAI: result = $signed(reg1) >>> immed[5:0];
             SLT: result = $signed(reg1) < $signed(reg2) ? 1 : 0;
             SLTI: result = $signed(reg1) < $signed(immed) ? 1 : 0;
             SLTU: result = reg1 < reg2 ? 1 : 0;
