@@ -30,6 +30,7 @@ module memory
 
     bool waiting, memory_enable;
     word_t data;
+    word_t last_inst_count;
 
     is_memory is_memory_util (
         .op(ex_mem_state.op),
@@ -65,6 +66,10 @@ module memory
         .write_reg(forward.reg_write_enable)
     );
 
+    always_ff @(posedge clk) begin
+        last_inst_count <= ex_mem_state.inst_counter;
+    end
+
     always_comb begin
         if (! mem_read && ! mem_write) begin
             // memory irrelevant, passdown alu value
@@ -91,7 +96,7 @@ module memory
         mem_wb_state.jump = ex_mem_state.jump;
         mem_wb_state.inst_counter = ex_mem_state.inst_counter;
 
-        ok = ! waiting;
+        ok = ! waiting && last_inst_count == ex_mem_state.inst_counter;
         mem_wb_state.difftest_skip = (mem_read || mem_write) && ex_mem_state.alu_result[31] == 0;
     end
 

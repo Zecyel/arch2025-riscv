@@ -19,6 +19,7 @@ module fetch
     input bool enable,
 
     input jump_writer jump,
+    input word_t inst_counter,
 
     output if_id if_id_state,
     output bool ok
@@ -30,8 +31,8 @@ module fetch
     addr_t last_pc;
     bool stall;
 
-    word_t inst_counter;
-    word_t jmp_awokener;
+    word_t current_inst_counter;
+    word_t stall_awokener;
 
     always_ff @(posedge clk or posedge rst) begin
         if (rst) begin
@@ -46,9 +47,9 @@ module fetch
             if_id_state.inst_pc <= PCINIT;
             if_id_state.valid <= 1;
 
-            inst_counter <= 0;
+            current_inst_counter <= 0;
         end else if (! waiting & enable) begin
-            if (! stall || jump.jump_inst && jump.inst_counter == jmp_awokener) begin
+            if (! stall || inst_counter == stall_awokener) begin
                 stall <= 0; // clear the stall flag
                 if (jump.do_jump & jump.jump_inst) begin
                     // jump to the target addr
@@ -78,21 +79,22 @@ module fetch
                 if_id_state.inst <= 0;
             end
         end else if (iresp.addr_ok & iresp.data_ok) begin 
-            inst_counter <= inst_counter + 1;
+            current_inst_counter <= current_inst_counter + 1;
 
             ireq.valid <= 0;
             if_id_state.inst <= iresp.data;
 
-            if (iresp.data[6:0] == 7'b1100011 || iresp.data[6:0] == 7'b1101111 || iresp.data[6:0] == 7'b1100111) begin
+            if (iresp.data[6:0] == 7'b1100011 || iresp.data[6:0] == 7'b1101111 || iresp.data[6:0] == 7'b1100111
+                || iresp.data[6:0] == 7'b0000011 || iresp.data[6:0] == 7'b0100011) begin
                 stall <= 1; // stall the next instruction
-                jmp_awokener <= inst_counter + 1;
+                stall_awokener <= current_inst_counter + 1;
             end else begin
                 stall <= 0;
             end
             if_id_state.inst_pc <= last_pc;
             waiting <= 0;
             if_id_state.valid <= 1;
-            if_id_state.inst_counter <= inst_counter + 1;
+            if_id_state.inst_counter <= current_inst_counter + 1;
         end
     end
 

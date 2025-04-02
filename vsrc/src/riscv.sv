@@ -66,6 +66,8 @@ module riscv
         reg_write_data = wb_forward.reg_write_data;
     end
 
+    word_t inst_counter;
+
     regs regs_inst (
         .clk(clk),
         .rst(rst),
@@ -84,6 +86,7 @@ module riscv
         .enable(unified_ok),
         .if_id_state(if_id_state_new),
         .jump(jump),
+        .inst_counter(inst_counter),
 
         .ok(fetch_ok)
     );
@@ -143,6 +146,7 @@ module riscv
         .inst_pc(inst_pc),
         .jump(jump),
         .difftest_skip(difftest_skip),
+        .inst_counter(inst_counter),
 
         .ok(commit_ok)
     );

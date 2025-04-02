@@ -23,6 +23,10 @@ module core import common::*; (
     u5 reg_dest_addr;
     word_t reg_write_data;
 
+    bool delayed_reg_write_enable;
+    u5 delayed_reg_dest_addr;
+    word_t delayed_reg_write_data;
+
     bool valid;
     inst_t inst;
     addr_t inst_pc;
@@ -70,6 +74,18 @@ module core import common::*; (
         .difftest_skip(difftest_skip)
     );
 
+    always_ff @(posedge clk or posedge reset) begin
+        if (reset) begin
+            delayed_reg_write_enable <= 0;
+            delayed_reg_dest_addr <= 0;
+            delayed_reg_write_data <= 0;
+        end else begin
+            delayed_reg_write_enable <= reg_write_enable;
+            delayed_reg_dest_addr <= reg_dest_addr;
+            delayed_reg_write_data <= reg_write_data;
+        end
+    end
+
 `ifdef VERILATOR
     DifftestInstrCommit DifftestInstrCommit(
         .clock              (clk),
@@ -81,9 +97,9 @@ module core import common::*; (
         .skip               (difftest_skip),
         .isRVC              (0),
         .scFailed           (0),
-        .wen                (reg_write_enable),
-        .wdest              ({3'b000, reg_dest_addr}), // to make kooWZ happy
-        .wdata              (reg_write_data)
+        .wen                (delayed_reg_write_enable),
+        .wdest              ({3'b000, delayed_reg_dest_addr}), // to make kooWZ happy
+        .wdata              (delayed_reg_write_data)
     );
 
     DifftestArchIntRegState DifftestArchIntRegState (

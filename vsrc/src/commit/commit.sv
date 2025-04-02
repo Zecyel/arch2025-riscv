@@ -19,6 +19,7 @@ module commit
     output addr_t inst_pc,
     output jump_writer jump,
     output bool difftest_skip,
+    output word_t inst_counter,
     output bool ok
 );
 
@@ -38,6 +39,7 @@ module commit
         inst_pc = wb_commit_state.inst_pc;
         valid = last_inst_counter != wb_commit_state.inst_counter;
         jump = wb_commit_state.jump;
+        inst_counter = wb_commit_state.inst_counter;
         difftest_skip = wb_commit_state.difftest_skip;
     end
 
