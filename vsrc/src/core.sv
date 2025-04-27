@@ -149,28 +149,28 @@ module core import common::*; (
         .instrCnt           (0)
     );
 
-    DifftestCSRState DifftestCSRState(
-        .clock              (clk),
-        .coreid             (0),
-        .priviledgeMode     (3),
-        .mstatus            (0),
-        .sstatus            (0 /* mstatus & 64'h800000030001e000 */),
-        .mepc               (0),
-        .sepc               (0),
-        .mtval              (0),
-        .stval              (0),
-        .mtvec              (0),
-        .stvec              (0),
-        .mcause             (0),
-        .scause             (0),
-        .satp               (0),
-        .mip                (0),
-        .mie                (0),
-        .mscratch           (0),
-        .sscratch           (0),
-        .mideleg            (0),
-        .medeleg            (0)
-    );
+	DifftestCSRState DifftestCSRState(
+		.clock              (clk),
+		.coreid             (0),
+		.priviledgeMode     (3),
+		.mstatus            (0),
+		.sstatus            (0 /* mstatus & SSTATUS_MASK */),
+		.mepc               (0),
+		.sepc               (0),
+		.mtval              (0),
+		.stval              (0),
+		.mtvec              (0),
+		.stvec              (0),
+		.mcause             (0),
+		.scause             (0),
+		.satp               (0),
+		.mip                (0),
+		.mie                (0),
+		.mscratch           (0),
+		.sscratch           (0),
+		.mideleg            (0),
+		.medeleg            (0)
+	);
 `endif
 endmodule
 `endif
