@@ -112,6 +112,7 @@ typedef i65 arith_t;
 // all addresses and words are 64-bit
 typedef i64 addr_t;
 typedef i64 word_t;
+typedef i64 csr_t;
 
 // number of bytes transferred in one memory r/w
 typedef enum i3 {

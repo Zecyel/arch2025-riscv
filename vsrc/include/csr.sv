@@ -71,6 +71,20 @@ package csr_pkg;
     u16 asid;
     u44 ppn;
   } satp_t;
+
+  typedef struct packed {
+    csr_t mstatus;
+    csr_t mtvec;
+    csr_t mip;
+    csr_t mie;
+    csr_t mscratch;
+    csr_t mcause;
+    csr_t mtval;
+    csr_t mepc;
+    csr_t mcycle;
+    csr_t mhartid;
+    csr_t satp;
+  } csr_pack;
 endpackage
 
 `endif
