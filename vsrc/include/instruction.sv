@@ -19,8 +19,8 @@ package instruction;
         SLLIW, SRLIW, SRAIW, SLLW, SRLW, SRAW, // RV64I
         LB, LH, LW, LBU, LHU, SB, SH, SW,
         LD, LWU, SD, // RV64I
-        BEQ, BNE, BLT, BGE, BLTU, BGEU, // not implemented
-        JAL, JALR, // not implemented
+        BEQ, BNE, BLT, BGE, BLTU, BGEU,
+        JAL, JALR,
         LUI,
         AUIPC,
         ECALL, EBREAK // not implemented (including decoder)
