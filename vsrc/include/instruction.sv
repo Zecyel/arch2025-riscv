@@ -21,8 +21,8 @@ package instruction;
         LD, LWU, SD, // RV64I
         BEQ, BNE, BLT, BGE, BLTU, BGEU,
         JAL, JALR,
-        LUI,
-        AUIPC,
+        LUI, AUIPC,
+        CSRRW, CSRRS, CSRRC, CSRRWI, CSRRSI, CSRRCI,
         ECALL, EBREAK // not implemented (including decoder)
     } instruction_type;
 

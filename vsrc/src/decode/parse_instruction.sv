@@ -101,6 +101,16 @@ module parse_instruction
             7'b0110111: op = LUI;
             7'b0010111: op = AUIPC;
 
+            7'b1110011: case (funct3)
+                'h1: op = CSRRW;
+                'h2: op = CSRRS;
+                'h3: op = CSRRC;
+                'h5: op = CSRRWI;
+                'h6: op = CSRRSI;
+                'h7: op = CSRRCI;
+                default: op = NOP;
+            endcase
+            
             default: op = NOP;
         endcase
 
