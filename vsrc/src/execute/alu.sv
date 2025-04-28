@@ -10,8 +10,8 @@ module alu
     import common::*;
     import instruction::*;
 (
-    input word_t reg1,
-    input word_t reg2,
+    input word_t op1,
+    input word_t op2,
     input word_t immed,
     
     input addr_t pc, // for auipc, bxx, jalr, jal, etc.
@@ -23,29 +23,29 @@ module alu
     always_comb begin
 
         unique case (op)
-            ADD: result = reg1 + reg2;
-            SUB: result = reg1 - reg2;
-            AND: result = reg1 & reg2;
-            OR: result = reg1 | reg2;
-            XOR: result = reg1 ^ reg2;
-            ADDI: result = reg1 + immed;
-            XORI: result = reg1 ^ immed;
-            ORI: result = reg1 | immed;
-            ANDI: result = reg1 & immed;
+            ADD: result = op1 + op2;
+            SUB: result = op1 - op2;
+            AND: result = op1 & op2;
+            OR: result = op1 | op2;
+            XOR: result = op1 ^ op2;
+            ADDI: result = op1 + immed;
+            XORI: result = op1 ^ immed;
+            ORI: result = op1 | immed;
+            ANDI: result = op1 & immed;
             ADDW: begin
-                u32 unextended_result = $signed(reg1[31:0] + reg2[31:0]);
+                u32 unextended_result = $signed(op1[31:0] + op2[31:0]);
                 result = {{32{unextended_result[31]}}, unextended_result};
             end
             SUBW: begin
-                u32 unextended_result = $signed(reg1[31:0] - reg2[31:0]);
+                u32 unextended_result = $signed(op1[31:0] - op2[31:0]);
                 result = {{32{unextended_result[31]}}, unextended_result};
             end
             ADDIW: begin
-                u32 unextended_result = $signed(reg1[31:0] + immed[31:0]);
+                u32 unextended_result = $signed(op1[31:0] + immed[31:0]);
                 result = {{32{unextended_result[31]}}, unextended_result};
             end
 
-            LD, LB, LH, LW, LBU, LHU, LWU, SD, SB, SH, SW: result = reg1 + immed;
+            LD, LB, LH, LW, LBU, LHU, LWU, SD, SB, SH, SW: result = op1 + immed;
 
             LUI: result = immed;
             AUIPC: result = pc + immed;
@@ -57,43 +57,43 @@ module alu
 
             JALR: begin
                 result = pc + 4;
-                new_pc = reg1 + immed;
+                new_pc = op1 + immed;
             end
 
             BEQ, BNE, BLT, BGE, BLTU, BGEU: new_pc = pc + immed;
-            SLL: result = reg1 << reg2[5:0];
-            SRL: result = reg1 >> reg2[5:0];
-            SRA: result = $signed(reg1) >>> reg2[5:0];
-            SLLI: result = reg1 << immed[5:0];
-            SRLI: result = reg1 >> immed[5:0];
-            SRAI: result = $signed(reg1) >>> immed[5:0];
-            SLT: result = $signed(reg1) < $signed(reg2) ? 1 : 0;
-            SLTI: result = $signed(reg1) < $signed(immed) ? 1 : 0;
-            SLTU: result = reg1 < reg2 ? 1 : 0;
-            SLTIU: result = reg1 < immed ? 1 : 0;
+            SLL: result = op1 << op2[5:0];
+            SRL: result = op1 >> op2[5:0];
+            SRA: result = $signed(op1) >>> op2[5:0];
+            SLLI: result = op1 << immed[5:0];
+            SRLI: result = op1 >> immed[5:0];
+            SRAI: result = $signed(op1) >>> immed[5:0];
+            SLT: result = $signed(op1) < $signed(op2) ? 1 : 0;
+            SLTI: result = $signed(op1) < $signed(immed) ? 1 : 0;
+            SLTU: result = op1 < op2 ? 1 : 0;
+            SLTIU: result = op1 < immed ? 1 : 0;
 
             SLLW: begin
-                u32 unextended_result = reg1[31:0] << reg2[4:0];
+                u32 unextended_result = op1[31:0] << op2[4:0];
                 result = {{32{unextended_result[31]}}, unextended_result};
             end
             SRLW: begin
-                u32 unextended_result = reg1[31:0] >> reg2[4:0];
+                u32 unextended_result = op1[31:0] >> op2[4:0];
                 result = {{32{unextended_result[31]}}, unextended_result};
             end
             SRAW: begin
-                u32 unextended_result = $signed(reg1[31:0]) >>> reg2[4:0];
+                u32 unextended_result = $signed(op1[31:0]) >>> op2[4:0];
                 result = {{32{unextended_result[31]}}, unextended_result};
             end
             SLLIW: begin
-                u32 unextended_result = reg1[31:0] << immed[4:0];
+                u32 unextended_result = op1[31:0] << immed[4:0];
                 result = {{32{unextended_result[31]}}, unextended_result};
             end
             SRLIW: begin
-                u32 unextended_result = reg1[31:0] >> immed[4:0];
+                u32 unextended_result = op1[31:0] >> immed[4:0];
                 result = {{32{unextended_result[31]}}, unextended_result};
             end
             SRAIW: begin
-                u32 unextended_result = $signed(reg1[31:0]) >>> immed[4:0];
+                u32 unextended_result = $signed(op1[31:0]) >>> immed[4:0];
                 result = {{32{unextended_result[31]}}, unextended_result};
             end
 

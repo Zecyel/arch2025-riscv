@@ -86,6 +86,8 @@ module memory
             forward.reg_dest_addr = ex_mem_state.inst[11:7];
         end else begin
             // forward.reg_write_enable = 0;
+            forward.reg_write_data = 'h114514; // stupid latch tester
+            forward.reg_dest_addr = 'h6; // stupid latch tester
         end
         
         mem_wb_state.inst = ex_mem_state.inst;
@@ -96,9 +98,10 @@ module memory
         mem_wb_state.jump = ex_mem_state.jump;
         mem_wb_state.inst_counter = ex_mem_state.inst_counter;
 
-        ok = ! waiting && last_inst_count == ex_mem_state.inst_counter;
         mem_wb_state.difftest_skip = (mem_read || mem_write) && ex_mem_state.alu_result[31] == 0;
     end
+
+    assign ok = ! waiting && last_inst_count == ex_mem_state.inst_counter;
 
 endmodule
 
