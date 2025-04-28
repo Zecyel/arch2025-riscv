@@ -3,9 +3,13 @@
 
 `ifdef VERILATOR
 `include "include/common.sv"
+`include "include/instruction.sv"
 `endif
 
-module alu import common::*; (
+module alu
+    import common::*;
+    import instruction::*;
+(
     input word_t reg1,
     input word_t reg2,
     input word_t immed,

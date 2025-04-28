@@ -11,8 +11,11 @@
 import common::*;
 import instruction::*;
 import combined_wire::*;
-package temp_storage;
 
+package temp_storage;
+    import common::*;
+    import instruction::*;
+    import combined_wire::*;
     typedef struct packed {
         inst_t inst;
         addr_t inst_pc;

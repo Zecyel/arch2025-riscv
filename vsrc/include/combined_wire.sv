@@ -8,6 +8,7 @@
 
 import common::*;
 package combined_wire;
+    import common::*;
 
     typedef struct packed {
         reg_addr reg_dest_addr;

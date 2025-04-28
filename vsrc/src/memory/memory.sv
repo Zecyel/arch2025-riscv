@@ -81,11 +81,11 @@ module memory
         end else if (mem_read) begin
             mem_wb_state.value = data;
 
-            forward.reg_write_enable = 1;
+            // forward.reg_write_enable = 1;
             forward.reg_write_data = data;
             forward.reg_dest_addr = ex_mem_state.inst[11:7];
         end else begin
-            forward.reg_write_enable = 0;
+            // forward.reg_write_enable = 0;
         end
         
         mem_wb_state.inst = ex_mem_state.inst;
