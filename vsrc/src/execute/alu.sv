@@ -16,6 +16,9 @@ module alu
     
     input addr_t pc, // for auipc, bxx, jalr, jal, etc.
     output addr_t new_pc,
+
+    input csr_t csr, // for csr instructions
+    output csr_t new_csr,
     input instruction_type op,
 
     output word_t result
@@ -95,6 +98,19 @@ module alu
             SRAIW: begin
                 u32 unextended_result = $signed(op1[31:0]) >>> immed[4:0];
                 result = {{32{unextended_result[31]}}, unextended_result};
+            end
+
+            CSRRW, CSRRWI: begin
+                new_csr = op1;
+                result = csr;
+            end
+            CSRRS, CSRRSI: begin
+                new_csr = op1 | csr;
+                result = csr;
+            end
+            CSRRC, CSRRCI: begin
+                new_csr = csr & ~op1;
+                result = csr;
             end
 
             default: begin end

@@ -24,6 +24,12 @@ package combined_wire;
         word_t inst_counter;
     } jump_writer;
 
+    typedef struct packed {
+        bool csr_write_enable;
+        csr_t csr_write_data;
+        csr_addr csr_dest_addr;
+    } csr_writer;
+
 endpackage
 
 `endif

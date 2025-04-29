@@ -5,6 +5,8 @@
 `include "include/common.sv"
 `include "include/temp_storage.sv"
 `include "include/combined_wire.sv"
+`include "include/csr.sv"
+
 `include "src/decode/parse_instruction.sv"
 `include "src/decode/parse_immed.sv"
 `include "src/decode/instruction_util.sv"
@@ -14,6 +16,7 @@ module decoder
     import common::*;
     import temp_storage::*;
     import combined_wire::*;
+    import csr_pkg::*;
 (
     input if_id if_id_state,
     output id_ex id_ex_state,
@@ -23,6 +26,7 @@ module decoder
     input reg_writer forward3,
 
     input word_t [31:0] regs_value,
+    input csr_pack csr_values,
     output bool ok
 );
 
@@ -37,6 +41,12 @@ module decoder
     parse_immed parse_immed_inst (
         .inst(inst),
         .immed(id_ex_state.immed)
+    );
+
+    csr_selector csr_selector_inst (
+        .csr(csr_values),
+        .csr_dest_addr(inst[31:20]),
+        .csr_out(id_ex_state.csr_value)
     );
 
     always_comb begin

@@ -97,6 +97,7 @@ module memory
         mem_wb_state.op = ex_mem_state.op;
         mem_wb_state.jump = ex_mem_state.jump;
         mem_wb_state.inst_counter = ex_mem_state.inst_counter;
+        mem_wb_state.csr = ex_mem_state.csr;
 
         mem_wb_state.difftest_skip = (mem_read || mem_write) && ex_mem_state.alu_result[31] == 0;
     end

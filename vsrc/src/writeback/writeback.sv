@@ -15,6 +15,7 @@ module writeback
     output wb_commit wb_commit_state,
 
     output reg_writer forward,
+    output csr_writer csr,
 
     output bool ok
 );
@@ -28,6 +29,7 @@ module writeback
         wb_commit_state.writer.reg_dest_addr = mem_wb_state.inst[11:7];
         wb_commit_state.writer.reg_write_data = mem_wb_state.value;
         forward = wb_commit_state.writer;
+        csr = mem_wb_state.csr;
 
         wb_commit_state.inst = mem_wb_state.inst;
         wb_commit_state.inst_pc = mem_wb_state.inst_pc;

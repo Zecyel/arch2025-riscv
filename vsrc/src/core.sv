@@ -3,11 +3,14 @@
 
 `ifdef VERILATOR
 `include "include/common.sv"
+`include "include/csr.sv"
 `include "src/riscv.sv"
 `endif
 
-
-module core import common::*; (
+module core
+    import common::*;
+    import csr_pkg::*;
+(
     input  logic       clk, reset,
     output ibus_req_t  ireq,
     input  ibus_resp_t iresp,
@@ -17,6 +20,7 @@ module core import common::*; (
 );
     
     word_t [31:0] regs;
+    csr_pack csrs;
     addr_t pc;
 
     bool reg_write_enable;
@@ -64,6 +68,7 @@ module core import common::*; (
         // for DiffTest
         .pc(pc), // the pc of to-be-executed instruction
         .regs(regs),
+        .csrs_out(csrs),
         .reg_write_enable(reg_write_enable),
         .reg_dest_addr(reg_dest_addr),
         .reg_write_data(reg_write_data),
@@ -89,7 +94,7 @@ module core import common::*; (
 `ifdef VERILATOR
     DifftestInstrCommit DifftestInstrCommit(
         .clock              (clk),
-        .coreid             (0),
+        .coreid             (csrs.mhartid[7:0]),
         .index              (0),
         .valid              (valid),
         .pc                 (inst_pc),
@@ -104,7 +109,7 @@ module core import common::*; (
 
     DifftestArchIntRegState DifftestArchIntRegState (
         .clock              (clk),
-        .coreid             (0),
+        .coreid             (csrs.mhartid[7:0]),
         .gpr_0              (regs[0]),
         .gpr_1              (regs[1]),
         .gpr_2              (regs[2]),
@@ -141,7 +146,7 @@ module core import common::*; (
 
     DifftestTrapEvent DifftestTrapEvent(
         .clock              (clk),
-        .coreid             (0),
+        .coreid             (csrs.mhartid[7:0]),
         .valid              (0),
         .code               (0),
         .pc                 (0),
@@ -151,22 +156,22 @@ module core import common::*; (
 
 	DifftestCSRState DifftestCSRState(
 		.clock              (clk),
-		.coreid             (0),
+		.coreid             (csrs.mhartid[7:0]),
 		.priviledgeMode     (3),
-		.mstatus            (0),
-		.sstatus            (0 /* mstatus & SSTATUS_MASK */),
-		.mepc               (0),
+		.mstatus            (csrs.mstatus),
+		.sstatus            (csrs.mstatus & SSTATUS_MASK),
+		.mepc               (csrs.mepc),
 		.sepc               (0),
-		.mtval              (0),
+		.mtval              (csrs.mtval),
 		.stval              (0),
-		.mtvec              (0),
+		.mtvec              (csrs.mtvec),
 		.stvec              (0),
-		.mcause             (0),
+		.mcause             (csrs.mcause),
 		.scause             (0),
-		.satp               (0),
-		.mip                (0),
-		.mie                (0),
-		.mscratch           (0),
+		.satp               (csrs.satp),
+		.mip                (csrs.mip),
+		.mie                (csrs.mie),
+		.mscratch           (csrs.mscratch),
 		.sscratch           (0),
 		.mideleg            (0),
 		.medeleg            (0)

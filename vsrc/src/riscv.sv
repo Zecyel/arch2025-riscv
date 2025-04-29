@@ -5,6 +5,7 @@
 `include "include/common.sv"
 `include "include/temp_storage.sv"
 `include "include/combined_wire.sv"
+`include "include/csr.sv"
 
 `include "src/regs.sv"
 
@@ -14,12 +15,14 @@
 `include "src/memory/memory.sv"
 `include "src/writeback/writeback.sv"
 `include "src/commit/commit.sv"
+`include "src/csr.sv"
 `endif
 
 module riscv
     import common::*;
     import temp_storage::*;
     import combined_wire::*;
+    import csr_pkg::*;
 (
     // cpu basics
     input logic clk,
@@ -34,6 +37,7 @@ module riscv
     // for DiffTest
     output word_t pc,
     output word_t [31:0] regs,
+    output csr_pack csrs_out,
     output bool reg_write_enable,
     output reg_addr reg_dest_addr,
     output word_t reg_write_data,
@@ -59,6 +63,20 @@ module riscv
 
     reg_writer ex_forward, mem_forward, wb_forward;
     jump_writer jump;
+    csr_writer csr_write;
+    csr_pack csrs;
+
+    assign csrs_out = csrs;
+
+    csr csr_inst (
+        .clk(clk),
+        .rst(rst),
+        .csrs(csrs),
+
+        .csr_write_enable(csr_write.csr_write_enable),
+        .csr_dest_addr(csr_write.csr_dest_addr),
+        .csr_write_data(csr_write.csr_write_data)
+    );
 
     always_comb begin
         reg_write_enable = wb_forward.reg_write_enable & unified_ok;
@@ -95,6 +113,7 @@ module riscv
         .if_id_state(if_id_state),
         .id_ex_state(id_ex_state_new),
         .regs_value(regs),
+        .csr_values(csrs),
 
         .forward1(ex_forward),
         .forward2(mem_forward),
@@ -133,7 +152,7 @@ module riscv
         .wb_commit_state(wb_commit_state_new),
 
         .forward(wb_forward),
-
+        .csr(csr_write),
         .ok(writeback_ok)
     );
 

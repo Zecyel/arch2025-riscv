@@ -1,10 +1,11 @@
-`ifndef CSR_SV
-`define CSR_SV
+`ifndef INCLUDE_CSR_SV
+`define INCLUDE_CSR_SV
 
 `ifdef VERILATOR
 `include "include/common.sv"
 `endif
 
+import common::*;
 package csr_pkg;
   import common::*;
 
@@ -85,6 +86,7 @@ package csr_pkg;
     csr_t mhartid;
     csr_t satp;
   } csr_pack;
+
 endpackage
 
 `endif

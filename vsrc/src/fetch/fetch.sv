@@ -85,7 +85,7 @@ module fetch
             if_id_state.inst <= iresp.data;
 
             if (iresp.data[6:0] == 7'b1100011 || iresp.data[6:0] == 7'b1101111 || iresp.data[6:0] == 7'b1100111
-                || iresp.data[6:0] == 7'b0000011 || iresp.data[6:0] == 7'b0100011) begin
+                || iresp.data[6:0] == 7'b0000011 || iresp.data[6:0] == 7'b0100011 || iresp.data[6:0] == 7'b1110011) begin
                 stall <= 1; // stall the next instruction
                 stall_awokener <= current_inst_counter + 1;
             end else begin

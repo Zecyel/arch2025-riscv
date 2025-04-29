@@ -32,6 +32,8 @@ package temp_storage;
         word_t reg1_value;
         word_t reg2_value;
         word_t immed; // sign extended
+
+        csr_t csr_value;
         
         instruction_type op;
         inst_t inst;
@@ -50,6 +52,7 @@ package temp_storage;
         inst_t inst;
         addr_t inst_pc;
         bool valid;
+        csr_writer csr;
 
         word_t inst_counter;
     } ex_mem;
@@ -62,6 +65,7 @@ package temp_storage;
         inst_t inst;
         addr_t inst_pc;
         bool valid;
+        csr_writer csr;
 
         word_t inst_counter;
         bool difftest_skip;
@@ -74,6 +78,7 @@ package temp_storage;
         inst_t inst;
         addr_t inst_pc;
         bool valid;
+        csr_writer csr; // maybe?
         
         bool difftest_skip;
         word_t inst_counter;

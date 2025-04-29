@@ -28,14 +28,25 @@ module execute
     word_t alu_result;
 
     word_t op1, op2;
+    bool csr, csr_immed;
+
+    is_csr is_csr_inst (
+        .op(id_ex_state.op),
+        .csr(csr)
+    );
+
+    is_csr_immed is_csr_immed_inst (
+        .op(id_ex_state.op),
+        .csr_immed(csr_immed)
+    );
 
     always_comb begin
         op1 = forward1.reg_write_enable && forward1.reg_dest_addr != 0 && forward1.reg_dest_addr == id_ex_state.reg1_addr ? forward1.reg_write_data :
-               forward2.reg_write_enable && forward2.reg_dest_addr != 0 && forward2.reg_dest_addr == id_ex_state.reg1_addr ? forward2.reg_write_data :
-               id_ex_state.reg1_value;
+              forward2.reg_write_enable && forward2.reg_dest_addr != 0 && forward2.reg_dest_addr == id_ex_state.reg1_addr ? forward2.reg_write_data :
+              id_ex_state.reg1_value;
         op2 = forward1.reg_write_enable && forward1.reg_dest_addr != 0 && forward1.reg_dest_addr == id_ex_state.reg2_addr ? forward1.reg_write_data :
-               forward2.reg_write_enable && forward2.reg_dest_addr != 0 && forward2.reg_dest_addr == id_ex_state.reg2_addr ? forward2.reg_write_data :
-               id_ex_state.reg2_value;
+              forward2.reg_write_enable && forward2.reg_dest_addr != 0 && forward2.reg_dest_addr == id_ex_state.reg2_addr ? forward2.reg_write_data :
+              id_ex_state.reg2_value;
     end
     
     jump_judge jump_judge_inst (
@@ -50,12 +61,16 @@ module execute
         .jump(ex_mem_state.jump.jump_inst)
     );
 
+    csr_t new_csr;
+
     alu alu_inst (
         .immed(id_ex_state.immed),
-        .op1(op1),
+        .op1(csr_immed ? { 59'b0, id_ex_state.reg1_addr } : op1),
         .op2(op2),
         .pc(id_ex_state.inst_pc),
         .new_pc(ex_mem_state.jump.dest_addr),
+        .csr(id_ex_state.csr_value),
+        .new_csr(new_csr),
         .op(id_ex_state.op),
         .result(alu_result)
     );
@@ -79,6 +94,10 @@ module execute
         ex_mem_state.op = id_ex_state.op;
         ex_mem_state.inst_counter = id_ex_state.inst_counter;
         ex_mem_state.jump.inst_counter = id_ex_state.inst_counter;
+
+        ex_mem_state.csr.csr_write_enable = csr;
+        ex_mem_state.csr.csr_write_data = new_csr;
+        ex_mem_state.csr.csr_dest_addr = id_ex_state.inst[31:20];
         ok = 1;
     end
 

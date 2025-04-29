@@ -24,7 +24,8 @@ module is_write_reg
             SLLIW, SRLIW, SRAIW, SLLW, SRLW, SRAW,
             LB, LH, LW, LBU, LHU, LD, LWU,
             JAL, JALR,
-            LUI, AUIPC: write_reg = 1;
+            LUI, AUIPC,
+            CSRRW, CSRRS, CSRRC, CSRRWI, CSRRSI, CSRRCI: write_reg = 1;
 
             default: write_reg = 0;
         endcase
@@ -32,7 +33,7 @@ module is_write_reg
 
 endmodule
 
-module is_arith
+module is_arith // forwardable instructions
     import common::*;
     import instruction::*;
 (
@@ -68,7 +69,7 @@ module is_stall
 
     always_comb begin
         case (op)
-            BEQ, BNE, BLT, BGE, BLTU, BGEU, JAL, JALR: stall = 1;
+            BEQ, BNE, BLT, BGE, BLTU, BGEU, JAL, JALR, CSRRW, CSRRS, CSRRC, CSRRWI, CSRRSI, CSRRCI: stall = 1;
 
             default: stall = 0;
         endcase
@@ -92,6 +93,7 @@ module is_stall_plain
             7'b1101111: stall = 1; // jal
             7'b1100111: stall = 1; // jalr
             7'b1110011: stall = 1; // ecall, ebreak
+            7'b1110011: stall = 1; // csr instructions
             default: stall = 0;
         endcase
     end
@@ -147,6 +149,40 @@ module is_memory_read
         case (op)
             LB, LH, LW, LBU, LHU, LD, LWU: memory_read = 1;
             default: memory_read = 0;
+        endcase
+    end
+
+endmodule
+
+module is_csr
+    import common::*;
+    import instruction::*;
+(
+    input instruction_type op,
+    output bool csr
+);
+
+    always_comb begin
+        case (op)
+            CSRRW, CSRRS, CSRRC, CSRRWI, CSRRSI, CSRRCI: csr = 1;
+            default: csr = 0;
+        endcase
+    end
+
+endmodule
+
+module is_csr_immed
+    import common::*;
+    import instruction::*;
+(
+    input instruction_type op,
+    output bool csr_immed
+);
+
+    always_comb begin
+        case (op)
+            CSRRWI, CSRRSI, CSRRCI: csr_immed = 1;
+            default: csr_immed = 0;
         endcase
     end
 
