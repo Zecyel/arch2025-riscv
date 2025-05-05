@@ -4,18 +4,18 @@
 `ifdef VERILATOR
 `include "include/common.sv"
 `include "include/csr.sv"
+`include "include/combined_wire.sv"
 `endif
 
 module csr
     import common::*;
     import csr_pkg::*;
+    import combined_wire::*;
 (
     input logic clk,
     input logic rst,
 
-    input logic csr_write_enable,
-    input csr_addr csr_dest_addr,
-    input csr_t csr_write_data,
+    input csr_writer writer,
 
     output csr_pack csrs
 );
@@ -38,26 +38,26 @@ module csr
             csr_reg.mhartid <= 0;
             csr_reg.satp <= 0;
         end else begin
-            if (! csr_write_enable) begin
+            if (! writer.csr_write_enable) begin
                 csr_reg.mcycle <= csr_reg.mcycle + 1;
-            end else if (csr_write_enable) begin
+            end else if (writer.csr_write_enable) begin
                 
-                if (csr_dest_addr != CSR_MCYCLE) begin
+                if (writer.csr_dest_addr != CSR_MCYCLE) begin
                     csr_reg.mcycle <= csr_reg.mcycle + 1;
                 end
 
-                unique case (csr_dest_addr)
-                    CSR_MSTATUS: csr_reg.mstatus <= csr_write_data & MSTATUS_MASK;
-                    CSR_MTVEC: csr_reg.mtvec <= csr_write_data & MTVEC_MASK;
-                    CSR_MIP: csr_reg.mip <= csr_write_data & MIP_MASK;
-                    CSR_MIE: csr_reg.mie <= csr_write_data;
-                    CSR_MSCRATCH: csr_reg.mscratch <= csr_write_data;
-                    CSR_MCAUSE: csr_reg.mcause <= csr_write_data;
-                    CSR_MTVAL: csr_reg.mtval <= csr_write_data;
-                    CSR_MEPC: csr_reg.mepc <= csr_write_data;
-                    CSR_MCYCLE: csr_reg.mcycle <= csr_write_data;
-                    CSR_MHARTID: csr_reg.mhartid <= csr_write_data;
-                    CSR_SATP: csr_reg.satp <= csr_write_data;
+                unique case (writer.csr_dest_addr)
+                    CSR_MSTATUS: csr_reg.mstatus <= writer.csr_write_data & MSTATUS_MASK;
+                    CSR_MTVEC: csr_reg.mtvec <= writer.csr_write_data & MTVEC_MASK;
+                    CSR_MIP: csr_reg.mip <= writer.csr_write_data & MIP_MASK;
+                    CSR_MIE: csr_reg.mie <= writer.csr_write_data;
+                    CSR_MSCRATCH: csr_reg.mscratch <= writer.csr_write_data;
+                    CSR_MCAUSE: csr_reg.mcause <= writer.csr_write_data;
+                    CSR_MTVAL: csr_reg.mtval <= writer.csr_write_data;
+                    CSR_MEPC: csr_reg.mepc <= writer.csr_write_data;
+                    CSR_MCYCLE: csr_reg.mcycle <= writer.csr_write_data;
+                    CSR_MHARTID: csr_reg.mhartid <= writer.csr_write_data;
+                    CSR_SATP: csr_reg.satp <= writer.csr_write_data;
                     default: begin end
                 endcase
             end

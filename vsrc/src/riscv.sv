@@ -72,10 +72,7 @@ module riscv
         .clk(clk),
         .rst(rst),
         .csrs(csrs),
-
-        .csr_write_enable(csr_write.csr_write_enable),
-        .csr_dest_addr(csr_write.csr_dest_addr),
-        .csr_write_data(csr_write.csr_write_data)
+        .writer(csr_write)
     );
 
     always_comb begin
