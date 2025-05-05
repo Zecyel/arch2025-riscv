@@ -47,7 +47,8 @@ module decoder
     csr_selector csr_selector_inst (
         .csr(csr_values),
         .csr_dest_addr(inst[31:20]),
-        .csr_out(id_ex_state.csr_value)
+        .csr_out(id_ex_state.csr_value),
+        .mask(id_ex_state.csr_write_mask)
     );
 
     always_comb begin

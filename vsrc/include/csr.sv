@@ -87,6 +87,20 @@ package csr_pkg;
     satp_t satp;
   } csr_pack;
 
+  typedef struct packed {
+    bool mstatus;   // bit 0
+    bool mtvec;     // bit 1
+    bool mip;       // bit 2
+    bool mie;       // bit 3
+    bool mscratch;  // bit 4
+    bool mcause;    // bit 5
+    bool mtval;     // bit 6
+    bool mepc;      // bit 7
+    bool mcycle;    // bit 8
+    bool mhartid;   // bit 9
+    bool satp;      // bit 10
+  } csr_mask;
+
 endpackage
 
 `endif

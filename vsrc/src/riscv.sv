@@ -73,7 +73,7 @@ module riscv
         .rst(rst),
         .csrs(csrs),
 
-        .csr_write_enable(csr_write.csr_write_enable),
+        .csr_write_mask(csr_write.csr_write_mask),
         .csr_dest_addr(csr_write.csr_dest_addr),
         .csr_write_data(csr_write.csr_write_data)
     );

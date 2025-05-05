@@ -28,12 +28,7 @@ module execute
     word_t alu_result;
 
     word_t op1, op2;
-    bool csr, csr_immed;
-
-    is_csr is_csr_inst (
-        .op(id_ex_state.op),
-        .csr(csr)
-    );
+    bool csr_immed;
 
     is_csr_immed is_csr_immed_inst (
         .op(id_ex_state.op),
@@ -95,7 +90,7 @@ module execute
         ex_mem_state.inst_counter = id_ex_state.inst_counter;
         ex_mem_state.jump.inst_counter = id_ex_state.inst_counter;
 
-        ex_mem_state.csr.csr_write_enable = csr;
+        ex_mem_state.csr.csr_write_mask = id_ex_state.csr_write_mask;
         ex_mem_state.csr.csr_write_data = new_csr;
         ex_mem_state.csr.csr_dest_addr = id_ex_state.inst[31:20];
         ok = 1;

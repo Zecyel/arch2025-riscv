@@ -12,23 +12,60 @@ module csr_selector
 (
     input csr_pack csr,
     input csr_addr csr_dest_addr,
-    output csr_t csr_out
+    output csr_t csr_out,
+    output csr_mask mask
 );
 
     always_comb begin
         unique case (csr_dest_addr)
-            CSR_MSTATUS: csr_out = csr.mstatus;
-            CSR_MTVEC: csr_out = csr.mtvec;
-            CSR_MIP: csr_out = csr.mip;
-            CSR_MIE: csr_out = csr.mie;
-            CSR_MSCRATCH: csr_out = csr.mscratch;
-            CSR_MCAUSE: csr_out = csr.mcause;
-            CSR_MTVAL: csr_out = csr.mtval;
-            CSR_MEPC: csr_out = csr.mepc;
-            CSR_MCYCLE: csr_out = csr.mcycle;
-            CSR_MHARTID: csr_out = csr.mhartid;
-            CSR_SATP: csr_out = csr.satp;
-            default: csr_out = 'h114514; // dummy value, to make verilog happy
+            CSR_MSTATUS: begin
+                csr_out = csr.mstatus;
+                mask = 1;
+            end
+            CSR_MTVEC: begin
+                csr_out = csr.mtvec;
+                mask = 2;
+            end
+            CSR_MIP: begin
+                csr_out = csr.mip;
+                mask = 4;
+            end
+            CSR_MIE: begin
+                csr_out = csr.mie;
+                mask = 4;
+            end
+            CSR_MSCRATCH: begin
+                csr_out = csr.mscratch;
+                mask = 8;
+            end
+            CSR_MCAUSE: begin
+                csr_out = csr.mcause;
+                mask = 'h10;
+            end
+            CSR_MTVAL: begin
+                csr_out = csr.mtval;
+                mask = 'h20;
+            end
+            CSR_MEPC: begin
+                csr_out = csr.mepc;
+                mask = 'h40;
+            end
+            CSR_MCYCLE: begin
+                csr_out = csr.mcycle;
+                mask = 'h80;
+            end
+            CSR_MHARTID: begin
+                csr_out = csr.mhartid;
+                mask = 'h100;
+            end
+            CSR_SATP: begin
+                csr_out = csr.satp;
+                mask = 'h200;
+            end
+            default: begin
+                csr_out = 'h114514; // dummy value, to make verilog happy
+                mask = 0;
+            end
         endcase
     end
 

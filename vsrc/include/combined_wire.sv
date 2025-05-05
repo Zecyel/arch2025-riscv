@@ -25,9 +25,8 @@ package combined_wire;
     } jump_writer;
 
     typedef struct packed {
-        bool csr_write_enable;
-        csr_t csr_write_data;
-        csr_addr csr_dest_addr;
+        csr_pack new_csrs;
+        csr_mask csr_write_mask;
     } csr_writer;
 
 endpackage

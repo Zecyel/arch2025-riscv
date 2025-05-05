@@ -13,9 +13,8 @@ module csr
     input logic clk,
     input logic rst,
 
-    input logic csr_write_enable,
-    input csr_addr csr_dest_addr,
-    input csr_t csr_write_data,
+    input csr_pack new_csrs,
+    input csr_mask mask,
 
     output csr_pack csrs
 );
@@ -38,29 +37,19 @@ module csr
             csr_reg.mhartid <= 0;
             csr_reg.satp <= 0;
         end else begin
-            if (! csr_write_enable) begin
-                csr_reg.mcycle <= csr_reg.mcycle + 1;
-            end else if (csr_write_enable) begin
-                
-                if (csr_dest_addr != CSR_MCYCLE) begin
-                    csr_reg.mcycle <= csr_reg.mcycle + 1;
-                end
-
-                unique case (csr_dest_addr)
-                    CSR_MSTATUS: csr_reg.mstatus <= csr_write_data & MSTATUS_MASK;
-                    CSR_MTVEC: csr_reg.mtvec <= csr_write_data & MTVEC_MASK;
-                    CSR_MIP: csr_reg.mip <= csr_write_data & MIP_MASK;
-                    CSR_MIE: csr_reg.mie <= csr_write_data;
-                    CSR_MSCRATCH: csr_reg.mscratch <= csr_write_data;
-                    CSR_MCAUSE: csr_reg.mcause <= csr_write_data;
-                    CSR_MTVAL: csr_reg.mtval <= csr_write_data;
-                    CSR_MEPC: csr_reg.mepc <= csr_write_data;
-                    CSR_MCYCLE: csr_reg.mcycle <= csr_write_data;
-                    CSR_MHARTID: csr_reg.mhartid <= csr_write_data;
-                    CSR_SATP: csr_reg.satp <= csr_write_data;
-                    default: begin end
-                endcase
-            end
+            if (mask.mstatus) csr_reg.mstatus <= new_csrs.mstatus & MSTATUS_MASK;
+            if (mask.mtvec) csr_reg.mtvec <= new_csrs.mtvec & MTVEC_MASK;
+            if (mask.mip) csr_reg.mip <= new_csrs.mip & MIP_MASK;
+            if (mask.mie) csr_reg.mie <= new_csrs.mie;
+            if (mask.mcycle) csr_reg.mcycle <= new_csrs.mcycle;
+            else csr_reg.mcycle <= csr_reg.mcycle + 1;
+            if (mask.mscratch) csr_reg.mscratch <= new_csrs.mscratch;
+            if (mask.mcause) csr_reg.mcause <= new_csrs.mcause;
+            if (mask.mtval) csr_reg.mtval <= new_csrs.mtval;
+            if (mask.mepc) csr_reg.mepc <= new_csrs.mepc;
+            if (mask.mcycle) csr_reg.mcycle <= new_csrs.mcycle;
+            if (mask.mhartid) csr_reg.mhartid <= new_csrs.mhartid;
+            if (mask.satp) csr_reg.satp <= new_csrs.satp;
         end
     end
 
