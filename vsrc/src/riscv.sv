@@ -15,7 +15,7 @@
 `include "src/memory/memory.sv"
 `include "src/writeback/writeback.sv"
 `include "src/commit/commit.sv"
-`include "src/csr.sv"
+`include "src/csr/csr.sv"
 `endif
 
 module riscv

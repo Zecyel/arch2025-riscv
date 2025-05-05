@@ -23,7 +23,8 @@ package instruction;
         JAL, JALR,
         LUI, AUIPC,
         CSRRW, CSRRS, CSRRC, CSRRWI, CSRRSI, CSRRCI,
-        ECALL, EBREAK // not implemented (including decoder)
+        ECALL, MRET,
+        EBREAK // not implemented (including decoder)
     } instruction_type;
 
 endpackage

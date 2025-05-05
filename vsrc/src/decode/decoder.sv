@@ -10,6 +10,7 @@
 `include "src/decode/parse_instruction.sv"
 `include "src/decode/parse_immed.sv"
 `include "src/decode/instruction_util.sv"
+`include "src/csr/selector.sv"
 `endif
 
 module decoder

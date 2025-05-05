@@ -102,6 +102,11 @@ module parse_instruction
             7'b0010111: op = AUIPC;
 
             7'b1110011: case (funct3)
+                'h0: begin
+                    if (inst[31:20] == 12'b0) op = ECALL;
+                    else if (inst[31:20] == 12'b000000000001) op = MRET;
+                    else op = NOP;
+                end
                 'h1: op = CSRRW;
                 'h2: op = CSRRS;
                 'h3: op = CSRRC;
