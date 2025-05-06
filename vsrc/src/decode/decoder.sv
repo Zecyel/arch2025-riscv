@@ -70,6 +70,9 @@ module decoder
         id_ex_state.valid = if_id_state.valid;
         id_ex_state.inst_counter = if_id_state.inst_counter;
 
+        id_ex_state.mtvec = csr_values.mtvec;
+        id_ex_state.mepc = csr_values.mepc;
+
         ok = 1;
     end
 

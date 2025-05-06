@@ -16,6 +16,9 @@ module csr
     input logic rst,
 
     input csr_writer writer,
+    input mode_t pmode,
+    output mode_t new_pmode,
+    output bool update_pmode, // priviledge mode
 
     output csr_pack csrs
 );
@@ -37,9 +40,14 @@ module csr
             csr_reg.mcycle <= 0;
             csr_reg.mhartid <= 0;
             csr_reg.satp <= 0;
+
+            new_pmode <= 0;
+            update_pmode <= 0;
         end else begin
             if (! writer.csr_write_enable) begin
                 csr_reg.mcycle <= csr_reg.mcycle + 1;
+                new_pmode <= 0;
+                update_pmode <= 0;
             end else if (writer.csr_write_enable && writer.plain) begin
                 
                 if (writer.csr_dest_addr != CSR_MCYCLE) begin
@@ -60,6 +68,26 @@ module csr
                     CSR_SATP: csr_reg.satp <= writer.csr_write_data;
                     default: begin end
                 endcase
+                new_pmode <= 0;
+                update_pmode <= 0;
+            end else if (writer.ecall) begin
+                csr_reg.mstatus.mpie <= csr_reg.mstatus.mie;
+                csr_reg.mstatus.mie <= 0;
+                csr_reg.mstatus.mpp <= pmode;
+                csr_reg.mepc <= writer.pc;
+                csr_reg.mcause <= 8;
+                // pc will be handled elsewhere
+                new_pmode <= 3;
+                update_pmode <= 1;
+            end else if (writer.mret) begin
+                csr_reg.mstatus.mie <= csr_reg.mstatus.mpie;
+                csr_reg.mstatus.mpie <= 1;
+                // pc will be handled elsewhere
+                new_pmode <= csr_reg.mstatus.mpp;
+                update_pmode <= 1;
+            end else begin
+                new_pmode <= 0;
+                update_pmode <= 0;
             end
         end
     end

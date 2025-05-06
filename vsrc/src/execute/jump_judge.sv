@@ -24,6 +24,8 @@ module jump_judge
             BGE: do_jump = $signed(op1) >= $signed(op2);
             BLTU: do_jump = op1 < op2;
             BGEU: do_jump = op1 >= op2;
+            ECALL: do_jump = 1;
+            MRET: do_jump = 1;
             default: begin end
         endcase
     end

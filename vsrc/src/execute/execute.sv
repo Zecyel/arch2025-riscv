@@ -76,6 +76,8 @@ module execute
         .new_pc(ex_mem_state.jump.dest_addr),
         .csr(id_ex_state.csr_value),
         .new_csr(new_csr),
+        .mtvec(id_ex_state.mtvec),
+        .mepc(id_ex_state.mepc),
         .op(id_ex_state.op),
         .result(alu_result)
     );
@@ -103,6 +105,10 @@ module execute
         ex_mem_state.csr.csr_write_enable = csr;
         ex_mem_state.csr.csr_write_data = new_csr;
         ex_mem_state.csr.csr_dest_addr = id_ex_state.inst[31:20];
+        ex_mem_state.csr.pc = id_ex_state.inst_pc;
+        ex_mem_state.csr.ecall = id_ex_state.op == ECALL ? 1 : 0;
+        ex_mem_state.csr.ebreak = id_ex_state.op == EBREAK ? 1 : 0;
+        ex_mem_state.csr.mret = id_ex_state.op == MRET ? 1 : 0;
         ex_mem_state.csr.plain = csr_plain;
         ok = 1;
     end

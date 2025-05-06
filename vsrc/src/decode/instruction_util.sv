@@ -110,7 +110,7 @@ module is_jump
 
     always_comb begin
         case (op)
-            BEQ, BNE, BLT, BGE, BLTU, BGEU, JAL, JALR: jump = 1;
+            BEQ, BNE, BLT, BGE, BLTU, BGEU, JAL, JALR, ECALL, MRET: jump = 1;
 
             default: jump = 0;
         endcase

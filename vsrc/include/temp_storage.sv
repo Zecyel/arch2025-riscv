@@ -34,6 +34,8 @@ package temp_storage;
         word_t immed; // sign extended
 
         csr_t csr_value;
+        csr_t mtvec;
+        csr_t mepc;
         
         instruction_type op;
         inst_t inst;

@@ -113,6 +113,7 @@ typedef i65 arith_t;
 typedef i64 addr_t;
 typedef i64 word_t;
 typedef i64 csr_t;
+typedef i2 mode_t;
 
 // number of bytes transferred in one memory r/w
 typedef enum i3 {

@@ -31,6 +31,10 @@ package combined_wire;
         // plain csr change above
 
         bool plain;
+        bool ecall;
+        bool ebreak;
+        bool mret;
+        addr_t pc;
     } csr_writer;
 
 endpackage

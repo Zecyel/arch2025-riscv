@@ -21,6 +21,9 @@ module alu
     output csr_t new_csr,
     input instruction_type op,
 
+    input csr_t mtvec,
+    input csr_t mepc,
+
     output word_t result
 );
     always_comb begin
@@ -112,6 +115,9 @@ module alu
                 new_csr = csr & ~op1;
                 result = csr;
             end
+
+            ECALL: new_pc = {mtvec[63:2], 2'b00};
+            MRET: new_pc = mepc;
 
             default: begin end
         endcase

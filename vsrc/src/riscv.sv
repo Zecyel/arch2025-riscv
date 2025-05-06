@@ -68,17 +68,23 @@ module riscv
 
     assign csrs_out = csrs;
 
+    mode_t pmode, new_pmode;
+    bool update_pmode;
+
     csr csr_inst (
         .clk(clk),
         .rst(rst),
         .csrs(csrs),
-        .writer(csr_write)
+        .writer(csr_write),
+        .pmode(pmode),
+        .new_pmode(new_pmode),
+        .update_pmode(update_pmode)
     );
 
     always_comb begin
-        reg_write_enable = wb_forward.reg_write_enable & unified_ok;
-        reg_dest_addr = wb_forward.reg_dest_addr;
-        reg_write_data = wb_forward.reg_write_data;
+        reg_write_enable = wb_commit_state_new.writer.reg_write_enable & unified_ok;
+        reg_dest_addr = wb_commit_state_new.writer.reg_dest_addr;
+        reg_write_data = wb_commit_state_new.writer.reg_write_data;
     end
 
     word_t inst_counter;
@@ -179,6 +185,9 @@ module riscv
                 ex_mem_state <= ex_mem_state_new;
                 mem_wb_state <= mem_wb_state_new;
                 wb_commit_state <= wb_commit_state_new;
+                if (update_pmode) begin
+                    pmode <= new_pmode;
+                end
             end
         end
     end
