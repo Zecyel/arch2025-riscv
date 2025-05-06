@@ -188,4 +188,21 @@ module is_csr_immed
 
 endmodule
 
+module is_csr_plain
+    import common::*;
+    import instruction::*;
+(
+    input instruction_type op,
+    output bool csr_plain
+);
+
+    always_comb begin
+        case (op)
+            CSRRW, CSRRS, CSRRC, CSRRWI, CSRRSI, CSRRCI: csr_plain = 1;
+            default: csr_plain = 0;
+        endcase
+    end
+
+endmodule
+
 `endif

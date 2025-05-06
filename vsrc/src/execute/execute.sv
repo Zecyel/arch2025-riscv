@@ -28,7 +28,7 @@ module execute
     word_t alu_result;
 
     word_t op1, op2;
-    bool csr, csr_immed;
+    bool csr, csr_immed, csr_plain;
 
     is_csr is_csr_inst (
         .op(id_ex_state.op),
@@ -38,6 +38,11 @@ module execute
     is_csr_immed is_csr_immed_inst (
         .op(id_ex_state.op),
         .csr_immed(csr_immed)
+    );
+
+    is_csr_plain is_csr_plain_inst (
+        .op(id_ex_state.op),
+        .csr_plain(csr_plain)
     );
 
     always_comb begin
@@ -98,6 +103,7 @@ module execute
         ex_mem_state.csr.csr_write_enable = csr;
         ex_mem_state.csr.csr_write_data = new_csr;
         ex_mem_state.csr.csr_dest_addr = id_ex_state.inst[31:20];
+        ex_mem_state.csr.plain = csr_plain;
         ok = 1;
     end
 

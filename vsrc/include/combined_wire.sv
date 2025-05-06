@@ -28,6 +28,9 @@ package combined_wire;
         bool csr_write_enable;
         csr_t csr_write_data;
         csr_addr csr_dest_addr;
+        // plain csr change above
+
+        bool plain;
     } csr_writer;
 
 endpackage

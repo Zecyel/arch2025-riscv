@@ -40,7 +40,7 @@ module csr
         end else begin
             if (! writer.csr_write_enable) begin
                 csr_reg.mcycle <= csr_reg.mcycle + 1;
-            end else if (writer.csr_write_enable) begin
+            end else if (writer.csr_write_enable && writer.plain) begin
                 
                 if (writer.csr_dest_addr != CSR_MCYCLE) begin
                     csr_reg.mcycle <= csr_reg.mcycle + 1;
