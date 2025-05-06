@@ -34,6 +34,7 @@ module core
     bool valid;
     inst_t inst;
     addr_t inst_pc;
+    mode_t mode;
     
     logic manual_reset_signal;
     bool reseted;
@@ -75,7 +76,7 @@ module core
         .valid(valid),
         .inst(inst),
         .inst_pc(inst_pc), // the pc of the finished instruction
-
+        .mode(mode),
         .difftest_skip(difftest_skip)
     );
 
@@ -157,7 +158,7 @@ module core
 	DifftestCSRState DifftestCSRState(
 		.clock              (clk),
 		.coreid             (csrs.mhartid[7:0]),
-		.priviledgeMode     (3),
+		.priviledgeMode     (mode),
 		.mstatus            (csrs.mstatus),
 		.sstatus            (csrs.mstatus & SSTATUS_MASK),
 		.mepc               (csrs.mepc),

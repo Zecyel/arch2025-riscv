@@ -44,7 +44,25 @@ module csr
             new_pmode <= 0;
             update_pmode <= 0;
         end else begin
-            if (! writer.csr_write_enable) begin
+            if (writer.ecall) begin
+                // $display("ECALL: %d", writer.pc);
+                csr_reg.mstatus.mpie <= csr_reg.mstatus.mie;
+                csr_reg.mstatus.mie <= 0;
+                csr_reg.mstatus.mpp <= pmode;
+                csr_reg.mepc <= writer.pc;
+                csr_reg.mcause <= 8;
+                // pc will be handled elsewhere
+                new_pmode <= 3;
+                update_pmode <= 1;
+            end else if (writer.mret) begin
+                // $display("MRET: %d", writer.pc);
+                // $display("MPP: %d", csr_reg.mstatus.mpp);
+                csr_reg.mstatus.mie <= csr_reg.mstatus.mpie;
+                csr_reg.mstatus.mpie <= 1;
+                // pc will be handled elsewhere
+                new_pmode <= csr_reg.mstatus.mpp;
+                update_pmode <= 1;
+            end else if (! writer.csr_write_enable) begin
                 csr_reg.mcycle <= csr_reg.mcycle + 1;
                 new_pmode <= 0;
                 update_pmode <= 0;
@@ -70,21 +88,6 @@ module csr
                 endcase
                 new_pmode <= 0;
                 update_pmode <= 0;
-            end else if (writer.ecall) begin
-                csr_reg.mstatus.mpie <= csr_reg.mstatus.mie;
-                csr_reg.mstatus.mie <= 0;
-                csr_reg.mstatus.mpp <= pmode;
-                csr_reg.mepc <= writer.pc;
-                csr_reg.mcause <= 8;
-                // pc will be handled elsewhere
-                new_pmode <= 3;
-                update_pmode <= 1;
-            end else if (writer.mret) begin
-                csr_reg.mstatus.mie <= csr_reg.mstatus.mpie;
-                csr_reg.mstatus.mpie <= 1;
-                // pc will be handled elsewhere
-                new_pmode <= csr_reg.mstatus.mpp;
-                update_pmode <= 1;
             end else begin
                 new_pmode <= 0;
                 update_pmode <= 0;

@@ -11,6 +11,8 @@ module writeback
     import common::*;
     import temp_storage::*;
 (
+    input logic clk,
+    input logic rst,
     input mem_wb mem_wb_state,
     output wb_commit wb_commit_state,
 
@@ -19,11 +21,16 @@ module writeback
 
     output bool ok
 );
+    bool _ok;
 
     is_write_reg is_write_reg_inst (
         .op(mem_wb_state.op),
         .write_reg(wb_commit_state.writer.reg_write_enable)
     );
+
+    always_ff @(posedge clk or posedge rst) begin
+        _ok = !_ok;
+    end
 
     always_comb begin
         wb_commit_state.writer.reg_dest_addr = mem_wb_state.inst[11:7];
@@ -37,7 +44,7 @@ module writeback
         wb_commit_state.jump = mem_wb_state.jump;
         wb_commit_state.difftest_skip = mem_wb_state.difftest_skip;
         wb_commit_state.inst_counter = mem_wb_state.inst_counter;
-        ok = 1;
+        ok = _ok;
     end
 
 endmodule

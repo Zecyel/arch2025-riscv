@@ -46,6 +46,7 @@ module riscv
     output bool valid,
     output inst_t inst,
     output addr_t inst_pc,
+    output mode_t mode,
 
     output bool difftest_skip
 );
@@ -69,6 +70,7 @@ module riscv
     assign csrs_out = csrs;
 
     mode_t pmode, new_pmode;
+    assign mode = pmode;
     bool update_pmode;
 
     csr csr_inst (
@@ -144,13 +146,14 @@ module riscv
         .dresp(dresp),
         .ex_mem_state(ex_mem_state),
         .mem_wb_state(mem_wb_state_new),
-
         .forward(mem_forward),
 
         .ok(memory_ok)
     );
 
     writeback writeback_instance (
+        .clk(clk),
+        .rst(rst),
         .mem_wb_state(mem_wb_state),
         .wb_commit_state(wb_commit_state_new),
 
@@ -178,16 +181,18 @@ module riscv
             // drink a cup of java ( also try brew! )
             // take on springboot
             // don't forget your redhat
+            pmode <= 3;
         end else begin
+            if (update_pmode) begin
+                pmode <= new_pmode;
+                // $display("pmode changed to %0d", new_pmode);
+            end
             if (unified_ok) begin
                 if_id_state <= if_id_state_new;
                 id_ex_state <= id_ex_state_new;
                 ex_mem_state <= ex_mem_state_new;
                 mem_wb_state <= mem_wb_state_new;
                 wb_commit_state <= wb_commit_state_new;
-                if (update_pmode) begin
-                    pmode <= new_pmode;
-                end
             end
         end
     end
