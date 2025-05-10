@@ -30,8 +30,12 @@ module SimTop import common::*;(
     cbus_req_t  icreq,  dcreq;
     cbus_resp_t icresp, dcresp;
 
+    csr_t satp;
+    mode_t priviledge_mode;
+
     core core(
-      .clk(clock), .reset, .ireq, .iresp, .dreq, .dresp, .trint, .swint, .exint
+      .clk(clock), .reset, .ireq, .iresp, .dreq, .dresp, .trint, .swint, .exint,
+      .satp(satp), .priviledge_mode(priviledge_mode)
     );
 
     IBusToCBus icvt(.*);

@@ -16,7 +16,10 @@ module core
     input  ibus_resp_t iresp,
     output dbus_req_t  dreq,
     input  dbus_resp_t dresp,
-    input  logic       trint, swint, exint
+    input  logic       trint, swint, exint,
+
+    output csr_t satp,
+    output mode_t priviledge_mode
 );
     
     word_t [31:0] regs;
@@ -35,6 +38,9 @@ module core
     inst_t inst;
     addr_t inst_pc;
     mode_t mode;
+
+    assign satp = csrs.satp;
+    assign priviledge_mode = mode;
     
     logic manual_reset_signal;
     bool reseted;

@@ -247,5 +247,11 @@ typedef u5 reg_addr;    // i like it too
 typedef u32 inst_t;     // i like it three
 typedef u12 csr_addr;
 
+typedef enum {
+    IDLE, // idle state
+    PT1, PT2, PT3, // fetch page table x
+    PHY // physical address
+} mmu_state;
+
 endpackage
 `endif

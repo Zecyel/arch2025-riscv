@@ -25,11 +25,13 @@ module VTop
     cbus_req_t  icreq,  dcreq;
     cbus_resp_t icresp, dcresp;
 
+    csr_t satp;
+    mode_t priviledge_mode;
+
     core core(.*);
     IBusToCBus icvt(.*);
 
     DBusToCBus dcvt(.*);
-
 
     CBusArbiter mux(
         .ireqs({icreq, dcreq}),
