@@ -19,7 +19,8 @@ module core
     input  logic       trint, swint, exint,
 
     output csr_t satp,
-    output mode_t priviledge_mode
+    output mode_t priviledge_mode,
+    input bool skip
 );
     
     word_t [31:0] regs;
@@ -83,7 +84,9 @@ module core
         .inst(inst),
         .inst_pc(inst_pc), // the pc of the finished instruction
         .mode(mode),
-        .difftest_skip(difftest_skip)
+        .difftest_skip(difftest_skip),
+
+        .skip(skip)
     );
 
     always_ff @(posedge clk or posedge reset) begin

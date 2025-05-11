@@ -27,6 +27,7 @@ module VTop
 
     csr_t satp;
     mode_t priviledge_mode;
+    bool skip;
 
     core core(.*);
     IBusToCBus icvt(.*);

@@ -26,7 +26,9 @@ module CBusArbiter
     input  cbus_req_t  [MAX_INDEX:0] ireqs,
     output cbus_resp_t [MAX_INDEX:0] iresps,
     output cbus_req_t  oreq,
-    input  cbus_resp_t oresp
+    input  cbus_resp_t oresp,
+
+    output bool skip
 );
 
     cbus_req_t req_virt;
@@ -41,7 +43,8 @@ module CBusArbiter
         .req_virt(req_virt),
         .req_phys(oreq),
         .resp_phys(oresp),
-        .resp_virt(resp_virt)
+        .resp_virt(resp_virt),
+        .skip(skip)
     );
 
 

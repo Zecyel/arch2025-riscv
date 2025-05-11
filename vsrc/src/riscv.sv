@@ -48,7 +48,8 @@ module riscv
     output addr_t inst_pc,
     output mode_t mode,
 
-    output bool difftest_skip
+    output bool difftest_skip,
+    input bool skip
 );
 
     if_id if_id_state, if_id_state_new;
@@ -147,7 +148,7 @@ module riscv
         .ex_mem_state(ex_mem_state),
         .mem_wb_state(mem_wb_state_new),
         .forward(mem_forward),
-
+        .skip(skip),
         .ok(memory_ok)
     );
 

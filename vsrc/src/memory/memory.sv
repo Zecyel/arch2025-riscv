@@ -24,7 +24,7 @@ module memory
     output mem_wb mem_wb_state,
 
     output reg_writer forward,
-
+    input bool skip,
     output bool ok
 );
 
@@ -99,7 +99,7 @@ module memory
         mem_wb_state.inst_counter = ex_mem_state.inst_counter;
         mem_wb_state.csr = ex_mem_state.csr;
 
-        mem_wb_state.difftest_skip = (mem_read || mem_write) && ex_mem_state.alu_result[31] == 0;
+        mem_wb_state.difftest_skip = (mem_read || mem_write) && skip;
     end
 
     assign ok = ! waiting && last_inst_count == ex_mem_state.inst_counter;

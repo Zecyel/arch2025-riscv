@@ -18,7 +18,9 @@ module mmu
     input cbus_req_t req_virt,
     output cbus_req_t req_phys,
     input cbus_resp_t resp_phys,
-    output cbus_resp_t resp_virt
+    output cbus_resp_t resp_virt,
+
+    output bool skip
 );
     parameter USER_MODE = 0;
     parameter MACHINE_MODE = 3;
@@ -28,6 +30,7 @@ module mmu
     always_ff @(posedge clk or posedge rst) begin
         if (rst) begin
             state <= IDLE;
+            skip <= 0;
         end else begin
             case (state)
                 CLEANUP: begin
@@ -36,6 +39,7 @@ module mmu
                     resp_virt.last <= 0;
                     resp_virt.ready <= 0;
                     resp_virt.data <= 0;
+                    skip <= 0;
                 end
 
                 IDLE: if (req_virt.valid) // the core send a request
@@ -95,6 +99,8 @@ module mmu
                     req_phys.data <= req_virt.data;
                     req_phys.len <= req_virt.len;
                     req_phys.burst <= req_virt.burst;
+
+                    skip <= resp_phys.data[29] == 0; // for the stupid difftest
                 end
 
                 PHY: if (resp_phys.last && resp_phys.ready) begin
