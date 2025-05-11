@@ -74,7 +74,8 @@ package csr_pkg;
   } satp_t;
 
   typedef struct packed {
-    mstatus_t mstatus;
+    csr_t mstatus;
+    // mstatus_t mstatus;
     csr_t mtvec;
     csr_t mip;
     csr_t mie;
@@ -84,7 +85,8 @@ package csr_pkg;
     csr_t mepc;
     csr_t mcycle;
     csr_t mhartid;
-    satp_t satp;
+    csr_t satp;
+    // satp_t satp;
   } csr_pack;
 
 endpackage

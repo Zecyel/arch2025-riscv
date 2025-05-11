@@ -35,6 +35,7 @@ package combined_wire;
         bool ebreak;
         bool mret;
         addr_t pc;
+        word_t inst_counter;
     } csr_writer;
 
 endpackage

@@ -129,6 +129,7 @@ module riscv
     );
 
     execute execute_instance (
+        .clk(clk),
         .id_ex_state(id_ex_state),
         .ex_mem_state(ex_mem_state_new),
 

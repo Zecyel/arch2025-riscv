@@ -104,7 +104,8 @@ module parse_instruction
             7'b1110011: case (funct3)
                 'h0: begin
                     if (inst[31:20] == 12'b0) op = ECALL; // 00000073
-                    else op = MRET; // 30200073
+                    else if (inst == 'h30200073) op = MRET; // 30200073
+                    else op = NOP;
                 end
                 'h1: op = CSRRW;
                 'h2: op = CSRRS;

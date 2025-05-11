@@ -117,7 +117,7 @@ module alu
             end
 
             ECALL: new_pc = {mtvec[63:2], 2'b00};
-            MRET: new_pc = mepc + 4;
+            MRET: new_pc = mepc;
 
             default: begin end
         endcase

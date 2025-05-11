@@ -15,6 +15,7 @@ module execute
     import temp_storage::*;
     import combined_wire::*;
 (
+    input logic clk,
     input id_ex id_ex_state,
     output ex_mem ex_mem_state,
 
@@ -53,6 +54,15 @@ module execute
               forward2.reg_write_enable && forward2.reg_dest_addr != 0 && forward2.reg_dest_addr == id_ex_state.reg2_addr ? forward2.reg_write_data :
               id_ex_state.reg2_value;
     end
+
+    // instruction_type last_op, last_op_to_write, last_last_op;
+
+    // assign last_op_to_write = last_op;
+
+    // always_ff @(posedge clk) begin
+    //     last_op <= id_ex_state.op;
+    //     last_last_op <= last_op_to_write;
+    // end
     
     jump_judge jump_judge_inst (
         .op(id_ex_state.op),
@@ -107,9 +117,10 @@ module execute
         ex_mem_state.csr.csr_dest_addr = id_ex_state.inst[31:20];
         ex_mem_state.csr.pc = id_ex_state.inst_pc;
         ex_mem_state.csr.ecall = id_ex_state.op == ECALL ? 1 : 0;
-        ex_mem_state.csr.ebreak = id_ex_state.op == EBREAK ? 1 : 0;
+        // ex_mem_state.csr.ebreak = id_ex_state.op == EBREAK ? 1 : 0;
         ex_mem_state.csr.mret = id_ex_state.op == MRET ? 1 : 0;
         ex_mem_state.csr.plain = csr_plain;
+        ex_mem_state.csr.inst_counter = id_ex_state.inst_counter;
         ok = 1;
     end
 

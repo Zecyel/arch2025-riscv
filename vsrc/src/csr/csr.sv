@@ -22,10 +22,14 @@ module csr
 
     output csr_pack csrs
 );
+    parameter USER_MODE = 0;
+    parameter MACHINE_MODE = 3;
 
     csr_pack csr_reg;
 
     assign csrs = csr_reg;
+
+    word_t last_inst, new_inst;
 
     always_ff @(posedge clk or posedge rst) begin
         if (rst) begin
@@ -44,23 +48,43 @@ module csr
             new_pmode <= 0;
             update_pmode <= 0;
         end else begin
+            last_inst <= writer.inst_counter;
+
+            if (last_inst != writer.inst_counter) begin
             if (writer.ecall) begin
                 // $display("ECALL: %d", writer.pc);
-                csr_reg.mstatus.mpie <= csr_reg.mstatus.mie;
-                csr_reg.mstatus.mie <= 0;
-                csr_reg.mstatus.mpp <= pmode;
+                // csr_reg.mstatus.mpie <= csr_reg.mstatus.mie;
+                // csr_reg.mstatus.mie <= 0;
+                // csr_reg.mstatus.mpp <= pmode;
+                csr_reg.mstatus <= {
+                    csr_reg.mstatus[63:13],
+                    pmode, // mpp
+                    csr_reg.mstatus[10:8],
+                    csr_reg.mstatus[3], // mpie
+                    csr_reg.mstatus[6:4],
+                    1'b0, // mie
+                    csr_reg.mstatus[2:0]
+                };
+
                 csr_reg.mepc <= writer.pc;
                 csr_reg.mcause <= 8;
                 // pc will be handled elsewhere
-                new_pmode <= 3;
+                new_pmode <= MACHINE_MODE;
                 update_pmode <= 1;
             end else if (writer.mret) begin
-                // $display("MRET: %d", writer.pc);
-                // $display("MPP: %d", csr_reg.mstatus.mpp);
-                csr_reg.mstatus.mie <= csr_reg.mstatus.mpie;
-                csr_reg.mstatus.mpie <= 1;
+                // csr_reg.mstatus.mie <= csr_reg.mstatus.mpie;
+                // csr_reg.mstatus.mpie <= 1;
+                csr_reg.mstatus <= {
+                    csr_reg.mstatus[63:8],
+                    1'b1, // mpie
+                    csr_reg.mstatus[6:4],
+                    csr_reg.mstatus[7], // mie
+                    csr_reg.mstatus[2:0]
+                };
+
                 // pc will be handled elsewhere
-                new_pmode <= csr_reg.mstatus.mpp;
+                // new_pmode <= csr_reg.mstatus.mpp;
+                new_pmode <= USER_MODE;
                 update_pmode <= 1;
             end else if (! writer.csr_write_enable) begin
                 csr_reg.mcycle <= csr_reg.mcycle + 1;
@@ -91,6 +115,8 @@ module csr
             end else begin
                 new_pmode <= 0;
                 update_pmode <= 0;
+            end
+
             end
         end
     end
