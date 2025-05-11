@@ -30,13 +30,16 @@ module mmu
             state <= IDLE;
         end else begin
             case (state)
+                CLEANUP: begin
+                    // clear the resp of last mmu translate
+                    state <= IDLE;
+                    resp_virt.last <= 0;
+                    resp_virt.ready <= 0;
+                    resp_virt.data <= 0;
+                end
+
                 IDLE: if (req_virt.valid) // the core send a request
                     if (priviledge_mode == MACHINE_MODE) begin
-                        // clear the resp of last mmu translate
-                        resp_virt.last <= 0;
-                        resp_virt.ready <= 0;
-                        resp_virt.data <= 0;
-
                         state <= PHY;
                         req_phys.valid <= req_virt.valid;
                         req_phys.is_write <= req_virt.is_write;
@@ -95,7 +98,7 @@ module mmu
                 end
 
                 PHY: if (resp_phys.last && resp_phys.ready) begin
-                    state <= IDLE;
+                    state <= CLEANUP;
 
                     // clear the request
                     req_phys.valid <= 0;
