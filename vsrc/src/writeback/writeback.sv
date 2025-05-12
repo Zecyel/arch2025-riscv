@@ -29,7 +29,11 @@ module writeback
     );
 
     always_ff @(posedge clk or posedge rst) begin
-        _ok = !_ok;
+        if (rst) begin
+            _ok <= 1;
+        end else begin
+            _ok <= !_ok;
+        end
     end
 
     always_comb begin
