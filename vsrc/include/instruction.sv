@@ -24,7 +24,8 @@ package instruction;
         LUI, AUIPC,
         CSRRW, CSRRS, CSRRC, CSRRWI, CSRRSI, CSRRCI,
         ECALL, MRET,
-        EBREAK // not implemented (including decoder)
+        EBREAK, // not implemented (including decoder)
+        ILLEGAL_INST
     } instruction_type;
 
 endpackage

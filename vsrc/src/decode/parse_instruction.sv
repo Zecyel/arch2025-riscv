@@ -35,7 +35,7 @@ module parse_instruction
                 'h520: op = SRA; 
                 'h200: op = SLT; 
                 'h300: op = SLTU;
-                default: op = NOP;
+                default: op = ILLEGAL_INST;
             endcase
 
             7'b0010011: case (funct3)
@@ -47,14 +47,14 @@ module parse_instruction
                 'h5: if (funct7[6:3] == 'h0) op = SRLI; else if (funct7[6:3] == 'h4) op = SRAI;
                 'h2: op = SLTI;
                 'h3: op = SLTIU;
-                default: op = NOP;
+                default: op = ILLEGAL_INST;
             endcase
 
             7'b0011011: case (funct3)
                 'h0: op = ADDIW;
                 'h1: if (funct7 == 'h00) op = SLLIW;
                 'h5: if (funct7 == 'h00) op = SRLIW; else if (funct7 == 'h20) op = SRAIW;
-                default: op = NOP;
+                default: op = ILLEGAL_INST;
             endcase
             
             7'b0111011: case ({1'b0, funct3, 1'b0, funct7})
@@ -63,7 +63,7 @@ module parse_instruction
                 'h100: op = SLLW;
                 'h500: op = SRLW;
                 'h520: op = SRAW;
-                default: op = NOP;
+                default: op = ILLEGAL_INST;
             endcase
 
             7'b0000011: case (funct3)
@@ -74,7 +74,7 @@ module parse_instruction
                 'h4: op = LBU;
                 'h5: op = LHU;
                 'h6: op = LWU;
-                default: op = NOP;
+                default: op = ILLEGAL_INST;
             endcase
 
             7'b0100011: case (funct3)
@@ -82,7 +82,7 @@ module parse_instruction
                 'h1: op = SH;
                 'h2: op = SW;
                 'h3: op = SD;
-                default: op = NOP;
+                default: op = ILLEGAL_INST;
             endcase
 
             7'b1100011: case (funct3)
@@ -92,7 +92,7 @@ module parse_instruction
                 'h5: op = BGE;
                 'h6: op = BLTU;
                 'h7: op = BGEU;
-                default: op = NOP;
+                default: op = ILLEGAL_INST;
             endcase
 
             7'b1101111: op = JAL;
@@ -105,7 +105,7 @@ module parse_instruction
                 'h0: begin
                     if (inst[31:20] == 12'b0) op = ECALL; // 00000073
                     else if (inst == 'h30200073) op = MRET; // 30200073
-                    else op = NOP;
+                    else op = ILLEGAL_INST;
                 end
                 'h1: op = CSRRW;
                 'h2: op = CSRRS;
@@ -113,10 +113,12 @@ module parse_instruction
                 'h5: op = CSRRWI;
                 'h6: op = CSRRSI;
                 'h7: op = CSRRCI;
-                default: op = NOP;
+                default: op = ILLEGAL_INST;
             endcase
             
-            default: op = NOP;
+            7'b0000000: if (inst == 0) op = NOP; else op = ILLEGAL_INST;
+
+            default: op = ILLEGAL_INST;
         endcase
 
     end
