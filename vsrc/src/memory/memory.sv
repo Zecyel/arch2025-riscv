@@ -47,6 +47,14 @@ module memory
         .memory_read(mem_read)
     );
 
+    bool align;
+
+    align_check align_check_inst (
+        .op(ex_mem_state.op),
+        .addr(ex_mem_state.alu_result),
+        .ok(align)
+    );
+
     visit_memory visit_memory_inst (
         .clk(clk),
         .rst(rst),
@@ -58,7 +66,8 @@ module memory
         .addr(ex_mem_state.alu_result),
         .write_mem_data(ex_mem_state.write_mem_data),
         .read_mem_data(data),
-        .awaiting(waiting)
+        .awaiting(waiting),
+        .align(align)
     );
 
     is_write_reg is_write_reg_inst (
@@ -78,13 +87,29 @@ module memory
             // forward.reg_write_enable = 1;
             forward.reg_write_data = ex_mem_state.alu_result;
             forward.reg_dest_addr = ex_mem_state.inst[11:7];
+
+            mem_wb_state.trap = ex_mem_state.trap;
         end else if (mem_read) begin
+            if (! align) begin
+                mem_wb_state.trap.trap_valid = 1;
+                mem_wb_state.trap.trap_code = 4; // load address misaligned
+                mem_wb_state.trap.is_exception = 1;
+            end else begin
+                mem_wb_state.trap = ex_mem_state.trap;
+            end
             mem_wb_state.value = data;
 
             // forward.reg_write_enable = 1;
             forward.reg_write_data = data;
             forward.reg_dest_addr = ex_mem_state.inst[11:7];
         end else begin
+            if (! align) begin
+                mem_wb_state.trap.trap_valid = 1;
+                mem_wb_state.trap.trap_code = 6; // store address misaligned
+                mem_wb_state.trap.is_exception = 1;
+            end else begin
+                mem_wb_state.trap = ex_mem_state.trap;
+            end
             // forward.reg_write_enable = 0;
             forward.reg_write_data = 'h114514; // stupid latch tester
             forward.reg_dest_addr = 'h6; // stupid latch tester

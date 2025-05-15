@@ -22,7 +22,8 @@ module visit_memory
     input instruction_type op,
     input addr_t addr,
     input word_t write_mem_data,
-
+    input bool align,
+    
     output word_t read_mem_data,
     output bool awaiting
 );
@@ -41,7 +42,7 @@ module visit_memory
         if (rst) begin
             waiting <= 0;
             dreq.valid <= 0;
-        end else begin
+        end else if (align) begin
             if (unified_ok) begin
                 cur_mem_op_started <= 0;
             end

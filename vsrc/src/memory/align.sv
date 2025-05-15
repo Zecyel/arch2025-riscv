@@ -172,4 +172,24 @@ module databus_post_align
 
 endmodule
 
+module align_check
+    import common::*;
+    import instruction::*;
+(
+    input instruction_type op,
+    input addr_t addr,
+    output bool ok
+);
+    always_comb begin
+        case (op)
+            LB, LBU, SB: ok = 1;
+            LH, LHU, SH: ok = addr[0] == 0;
+            LW, LWU, SW: ok = addr[1:0] == 0;
+            LD, SD: ok = addr[2:0] == 0;
+            default: ok = 0;
+        endcase
+    end
+
+endmodule
+
 `endif

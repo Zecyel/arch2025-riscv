@@ -22,6 +22,7 @@ package temp_storage;
         bool valid;
 
         word_t inst_counter;
+        trap_t trap;
     } if_id;
 
     typedef struct packed {
@@ -43,6 +44,7 @@ package temp_storage;
         bool valid;
 
         word_t inst_counter;
+        trap_t trap;
     } id_ex;
 
     typedef struct packed {
@@ -57,6 +59,7 @@ package temp_storage;
         csr_writer csr;
 
         word_t inst_counter;
+        trap_t trap;
     } ex_mem;
 
     typedef struct packed {
@@ -70,6 +73,7 @@ package temp_storage;
         csr_writer csr;
 
         word_t inst_counter;
+        trap_t trap;
         bool difftest_skip;
     } mem_wb;
 
@@ -83,6 +87,7 @@ package temp_storage;
         csr_writer csr; // maybe?
         
         bool difftest_skip;
+        trap_t trap;
         word_t inst_counter;
     } wb_commit;
 

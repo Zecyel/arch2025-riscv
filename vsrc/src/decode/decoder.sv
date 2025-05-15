@@ -73,6 +73,14 @@ module decoder
         id_ex_state.mtvec = csr_values.mtvec;
         id_ex_state.mepc = csr_values.mepc;
 
+        if (op == ILLEGAL_INST) begin
+            id_ex_state.trap.trap_valid = 1;
+            id_ex_state.trap.trap_code = 2; // illegal instruction
+            id_ex_state.trap.is_exception = 1;
+        end else begin
+            id_ex_state.trap = if_id_state.trap;
+        end
+
         ok = 1;
     end
 

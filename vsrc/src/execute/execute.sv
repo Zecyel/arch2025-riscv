@@ -121,6 +121,8 @@ module execute
         ex_mem_state.csr.mret = id_ex_state.op == MRET ? 1 : 0;
         ex_mem_state.csr.plain = csr_plain;
         ex_mem_state.csr.inst_counter = id_ex_state.inst_counter;
+
+        ex_mem_state.trap = id_ex_state.trap;
         ok = 1;
     end
 

@@ -86,6 +86,10 @@ module core
         .mode(mode),
         .difftest_skip(difftest_skip),
 
+        // external interrupts
+        .trint(trint),
+        .swint(swint),
+        .exint(exint),
         .skip(skip)
     );
 

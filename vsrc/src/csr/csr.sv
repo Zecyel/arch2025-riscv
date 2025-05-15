@@ -51,7 +51,7 @@ module csr
             last_inst <= writer.inst_counter;
 
             if (last_inst != writer.inst_counter) begin
-                if (writer.ecall) begin
+                if (writer.ecall || writer.trap.trap_valid) begin
                     // $display("ECALL: %d", writer.pc);
                     // csr_reg.mstatus.mpie <= csr_reg.mstatus.mie;
                     // csr_reg.mstatus.mie <= 0;
@@ -67,7 +67,7 @@ module csr
                     };
     
                     csr_reg.mepc <= writer.pc;
-                    csr_reg.mcause <= 8;
+                    csr_reg.mcause <= writer.ecall ? 8 : ({58'b0, writer.trap.trap_code} + (writer.trap.is_exception ? 0 : 64'h8000_0000_0000_0000));
                     // pc will be handled elsewhere
                     new_pmode <= MACHINE_MODE;
                     update_pmode <= 1;

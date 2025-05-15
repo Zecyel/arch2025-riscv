@@ -21,6 +21,12 @@ module fetch
     input jump_writer jump,
     input word_t inst_counter,
 
+    // interrupts
+    input logic trint,
+    input logic swint,
+    input logic exint,
+    input mode_t priviledge_mode,
+
     output if_id if_id_state,
     output bool ok
 );
@@ -48,35 +54,76 @@ module fetch
             if_id_state.valid <= 1;
 
             current_inst_counter <= 0;
+
+            if_id_state.trap.trap_valid <= 0;
+            if_id_state.trap.trap_code <= 0;
         end else if (! waiting & enable) begin
             if (! stall || inst_counter == stall_awokener) begin
                 stall <= 0; // clear the stall flag
-                if (jump.do_jump & jump.jump_inst) begin
-                    // jump to the target addr
-                    _pc <= jump.dest_addr;
+                if (trint || swint || exint) begin
+                    if_id_state.trap.trap_valid <= 1;
+                    if (swint) begin
+                        if_id_state.trap.trap_code <= 3;
+                    end else if (trint) begin
+                        if_id_state.trap.trap_code <= 7;
+                    end else if (exint) begin
+                        if_id_state.trap.trap_code <= 11;
+                    end else begin
+                        if_id_state.trap.is_exception <= 0; // dummy
+                    end
 
-                    // send the request
-                    ireq.valid <= 1;
-                    ireq.addr <= jump.dest_addr;
-                    waiting <= 1;
-                    last_pc <= jump.dest_addr;
+                    current_inst_counter <= current_inst_counter + 1;
+                    if_id_state.inst <= 0; // send a fake nop
+                    stall <= 1; // stall the next instruction
+                    stall_awokener <= current_inst_counter + 1;
                     if_id_state.valid <= 0;
+                    if_id_state.inst_counter <= current_inst_counter + 1;
+
+                end else if (_pc[1:0] != 0) begin
+                    if_id_state.trap.trap_valid <= 1;
+                    if_id_state.trap.trap_code <= 0; // pc unaligned
+                    if_id_state.trap.is_exception <= 1;
+
+                    current_inst_counter <= current_inst_counter + 1;
+                    if_id_state.inst <= 0; // send a fake nop
+                    stall <= 1; // stall the next instruction
+                    stall_awokener <= current_inst_counter + 1;
+                    if_id_state.valid <= 0;
+                    if_id_state.inst_counter <= current_inst_counter + 1;
                 end else begin
-                    // send the request
-                    ireq.valid <= 1;
-                    ireq.addr <= _pc + 4;
-                    waiting <= 1;
-                    last_pc <= _pc + 4;
-                    if_id_state.valid <= 0;
+                    if_id_state.trap.trap_valid <= 0;
+                    if_id_state.trap.trap_code <= 0;
+                    if_id_state.trap.is_exception <= 0;
+                    if (jump.do_jump & jump.jump_inst) begin
+                        // jump to the target addr
+                        _pc <= jump.dest_addr;
 
-                    // increase the PC
-                    _pc <= _pc + 4;
+                        // send the request
+                        ireq.valid <= 1;
+                        ireq.addr <= jump.dest_addr;
+                        waiting <= 1;
+                        last_pc <= jump.dest_addr;
+                        if_id_state.valid <= 0;
+                    end else begin
+                        // send the request
+                        ireq.valid <= 1;
+                        ireq.addr <= _pc + 4;
+                        waiting <= 1;
+                        last_pc <= _pc + 4;
+                        if_id_state.valid <= 0;
+
+                        // increase the PC
+                        _pc <= _pc + 4;
+                    end
                 end
             end else begin
                 // awaiting for the stall flag
                 // ignore the instruction bus
                 if_id_state.valid <= 0;
                 if_id_state.inst <= 0;
+                if_id_state.trap.trap_valid <= 0;
+                if_id_state.trap.trap_code <= 0;
+                if_id_state.trap.is_exception <= 0;
             end
         end else if (iresp.addr_ok & iresp.data_ok) begin 
             current_inst_counter <= current_inst_counter + 1;
@@ -95,6 +142,9 @@ module fetch
             waiting <= 0;
             if_id_state.valid <= 1;
             if_id_state.inst_counter <= current_inst_counter + 1;
+            if_id_state.trap.trap_valid <= 0;
+            if_id_state.trap.trap_code <= 0;
+            if_id_state.trap.is_exception <= 0;
         end
     end
 

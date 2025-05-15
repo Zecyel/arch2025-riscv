@@ -25,6 +25,12 @@ package combined_wire;
     } jump_writer;
 
     typedef struct packed {
+        bool is_exception;
+        i6 trap_code;
+        bool trap_valid;
+    } trap_t;
+
+    typedef struct packed {
         bool csr_write_enable;
         csr_t csr_write_data;
         csr_addr csr_dest_addr;
@@ -36,6 +42,8 @@ package combined_wire;
         bool mret;
         addr_t pc;
         word_t inst_counter;
+
+        trap_t trap;
     } csr_writer;
 
 endpackage

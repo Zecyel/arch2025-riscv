@@ -18,9 +18,17 @@ module writeback
 
     output reg_writer forward,
     output csr_writer csr,
-
+    input mode_t priviledge_mode,
+    input csr_t mstatus,
+    input csr_t mip,
+    input csr_t mie,
+    input csr_t mtvec,
     output bool ok
 );
+
+    parameter USER_MODE = 0;
+    parameter MACHINE_MODE = 3;
+
     bool _ok;
 
     is_write_reg is_write_reg_inst (
@@ -45,7 +53,24 @@ module writeback
         wb_commit_state.inst = mem_wb_state.inst;
         wb_commit_state.inst_pc = mem_wb_state.inst_pc;
         wb_commit_state.valid = mem_wb_state.valid;
-        wb_commit_state.jump = mem_wb_state.jump;
+
+        if (mem_wb_state.trap.trap_valid == 1) begin
+            if ((priviledge_mode == MACHINE_MODE && mstatus[3] == 1 || priviledge_mode == USER_MODE) && 
+                mip[mem_wb_state.trap.trap_code] == 1 && mie[mem_wb_state.trap.trap_code] == 1) begin
+                    wb_commit_state.csr.trap = mem_wb_state.trap;
+                    wb_commit_state.jump.do_jump = 1;
+                    wb_commit_state.jump.jump_inst = 1;
+                    wb_commit_state.jump.dest_addr = mtvec;
+                    wb_commit_state.jump.inst_counter = mem_wb_state.jump.inst_counter;
+                end else begin
+                    wb_commit_state.csr.trap = 0;
+                    wb_commit_state.jump = mem_wb_state.jump;
+                end
+        end else begin
+            wb_commit_state.csr.trap = 0;
+            wb_commit_state.jump = mem_wb_state.jump;
+        end
+
         wb_commit_state.difftest_skip = mem_wb_state.difftest_skip;
         wb_commit_state.inst_counter = mem_wb_state.inst_counter;
         ok = _ok;

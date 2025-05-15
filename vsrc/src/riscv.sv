@@ -48,6 +48,11 @@ module riscv
     output addr_t inst_pc,
     output mode_t mode,
 
+    // interrupts
+    input logic trint,
+    input logic swint,
+    input logic exint,
+
     output bool difftest_skip,
     input bool skip
 );
@@ -111,7 +116,10 @@ module riscv
         .if_id_state(if_id_state_new),
         .jump(jump),
         .inst_counter(inst_counter),
-
+        .trint(trint),
+        .swint(swint),
+        .exint(exint),
+        .priviledge_mode(pmode),
         .ok(fetch_ok)
     );
 
@@ -158,7 +166,11 @@ module riscv
         .rst(rst),
         .mem_wb_state(mem_wb_state),
         .wb_commit_state(wb_commit_state_new),
-
+        .priviledge_mode(pmode),
+        .mstatus(csrs.mstatus),
+        .mip(csrs.mip),
+        .mie(csrs.mie),
+        .mtvec(csrs.mtvec),
         .forward(wb_forward),
         .csr(csr_write),
         .ok(writeback_ok)
