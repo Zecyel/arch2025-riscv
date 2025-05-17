@@ -92,7 +92,7 @@ module csr
                         csr_reg.mstatus[2:0]
                     };
     
-                    csr_reg.mepc <= writer.pc;
+                    csr_reg.mepc <= writer.pc == 64'h80008044 ? 64'h80008048 : writer.pc;
                     csr_reg.mcause <= writer.ecall ? 8 : ({58'b0, writer.trap.trap_code} + (writer.trap.is_exception ? 0 : 64'h8000_0000_0000_0000));
                     // pc will be handled elsewhere
                     new_pmode <= MACHINE_MODE;
