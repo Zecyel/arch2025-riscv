@@ -122,7 +122,13 @@ module execute
         ex_mem_state.csr.plain = csr_plain;
         ex_mem_state.csr.inst_counter = id_ex_state.inst_counter;
 
-        ex_mem_state.trap = id_ex_state.trap;
+        if (id_ex_state.op == ECALL) begin
+            ex_mem_state.trap.trap_valid = 1;
+            ex_mem_state.trap.trap_code = 8;
+            ex_mem_state.trap.is_exception = 1;
+        end else begin
+            ex_mem_state.trap = id_ex_state.trap;
+        end
         ok = 1;
     end
 

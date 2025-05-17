@@ -30,6 +30,11 @@ module csr
     assign csrs = csr_reg;
 
     word_t last_inst, new_inst;
+    
+    u2 current_mpp;
+    always_comb begin
+        current_mpp = csr_reg.mstatus[12:11];
+    end
 
     always_ff @(posedge clk or posedge rst) begin
         if (rst) begin
@@ -75,7 +80,11 @@ module csr
                     // csr_reg.mstatus.mie <= csr_reg.mstatus.mpie;
                     // csr_reg.mstatus.mpie <= 1;
                     csr_reg.mstatus <= {
-                        csr_reg.mstatus[63:8],
+                        csr_reg.mstatus[63:17],
+                        2'b00, // xs
+                        csr_reg.mstatus[14:13],
+                        2'b00, // mpp
+                        csr_reg.mstatus[10:8],
                         1'b1, // mpie
                         csr_reg.mstatus[6:4],
                         csr_reg.mstatus[7], // mie
@@ -83,8 +92,7 @@ module csr
                     };
     
                     // pc will be handled elsewhere
-                    new_pmode <= csr_reg.mstatus[12:11];
-                    // new_pmode <= USER_MODE;
+                    new_pmode <= current_mpp;
                     update_pmode <= 1;
                 end else if (! writer.csr_write_enable) begin
                     csr_reg.mcycle <= csr_reg.mcycle + 1;

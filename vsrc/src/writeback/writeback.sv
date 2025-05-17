@@ -48,7 +48,8 @@ module writeback
         wb_commit_state.writer.reg_dest_addr = mem_wb_state.inst[11:7];
         wb_commit_state.writer.reg_write_data = mem_wb_state.value;
         forward = wb_commit_state.writer;
-        csr = mem_wb_state.csr;
+
+        csr = mem_wb_state.csr; // ??????????????
 
         wb_commit_state.inst = mem_wb_state.inst;
         wb_commit_state.inst_pc = mem_wb_state.inst_pc;
@@ -56,8 +57,8 @@ module writeback
 
         if (mem_wb_state.trap.trap_valid == 1) begin
             if ((priviledge_mode == MACHINE_MODE && mstatus[3] == 1 || priviledge_mode == USER_MODE) && 
-                (mip[mem_wb_state.trap.trap_code] == 1 && mie[mem_wb_state.trap.trap_code] == 1 || mem_wb_state.trap.is_exception == 1)) begin
-                    wb_commit_state.csr.trap = mem_wb_state.trap;
+                (mip[mem_wb_state.trap.trap_code] == 1 && mie[mem_wb_state.trap.trap_code] == 1 || mem_wb_state.trap.is_exception == 1 || mem_wb_state.op == ECALL)) begin
+                    wb_commit_state.csr.trap = mem_wb_state.trap; // enable the trap
                     wb_commit_state.jump.do_jump = 1;
                     wb_commit_state.jump.jump_inst = 1;
                     wb_commit_state.jump.dest_addr = mtvec;
