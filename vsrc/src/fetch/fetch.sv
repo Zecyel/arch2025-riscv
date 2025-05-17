@@ -91,7 +91,8 @@ module fetch
                     stall_awokener <= current_inst_counter + 1;
                     if_id_state.valid <= 0;
                     if_id_state.inst_counter <= current_inst_counter + 1;
-                    if_id_state.inst_pc <= 114514; // no body cares. for better debugging experience
+                    // if_id_state.inst_pc <= 114514; // no body cares. for better debugging experience
+                    // ok, it seems that the trap handling program do care about it
                 end else begin
                     if_id_state.trap.trap_valid <= 0;
                     if_id_state.trap.trap_code <= 0;
