@@ -26,6 +26,11 @@ module decoder
     input reg_writer forward2,
     input reg_writer forward3,
 
+    // interrupts
+    input logic trint,
+    input logic swint,
+    input logic exint,
+
     input word_t [31:0] regs_value,
     input csr_pack csr_values,
     output bool ok
@@ -47,7 +52,10 @@ module decoder
     csr_selector csr_selector_inst (
         .csr(csr_values),
         .csr_dest_addr(inst[31:20]),
-        .csr_out(id_ex_state.csr_value)
+        .csr_out(id_ex_state.csr_value),
+        .trint(trint),
+        .swint(swint),
+        .exint(exint)
     );
 
     always_comb begin

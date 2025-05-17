@@ -27,9 +27,15 @@ module fetch
     input logic exint,
     input mode_t priviledge_mode,
 
+    input csr_t mstatus,
+    input csr_t mip,
+    input csr_t mie,
+
     output if_id if_id_state,
     output bool ok
 );
+    parameter USER_MODE = 0;
+    parameter MACHINE_MODE = 3;
 
     addr_t _pc;
     bool waiting;
@@ -39,7 +45,8 @@ module fetch
 
     word_t current_inst_counter;
     word_t stall_awokener;
-    word_t last_int_inst;
+    
+    i2 current_int_handling; // 1 for trint, 2 for swint, 3 for exint. 0 for no intr handling
 
     always_ff @(posedge clk or posedge rst) begin
         if (rst) begin
@@ -58,18 +65,26 @@ module fetch
 
             if_id_state.trap.trap_valid <= 0;
             if_id_state.trap.trap_code <= 0;
+
+            current_int_handling <= 0;
         end else if (! waiting & enable) begin
+            if (! trint && ! swint && ! exint) begin
+                current_int_handling <= 0;
+            end
             if (! stall || inst_counter == stall_awokener) begin
                 stall <= 0; // clear the stall flag
-                if ((trint || swint || exint) && if_id_state.inst_counter - last_int_inst > 1000) begin
-                    last_int_inst <= if_id_state.inst_counter;
+                if ((priviledge_mode == MACHINE_MODE && mstatus[3] == 1 || priviledge_mode == USER_MODE) &&
+                (trint && mie[7] == 1 || swint && mie[3] == 1 || exint && mie[11] == 1) && current_int_handling == 0) begin // actually interrupt priority should be here
                     if_id_state.trap.trap_valid <= 1;
-                    if (swint) begin
+                    if (swint && mie[3] == 1) begin
                         if_id_state.trap.trap_code <= 3;
-                    end else if (trint) begin
+                        current_int_handling <= 2;
+                    end else if (trint && mie[7] == 1) begin
                         if_id_state.trap.trap_code <= 7;
-                    end else if (exint) begin
+                        current_int_handling <= 1;
+                    end else if (exint && mie[11] == 1) begin
                         if_id_state.trap.trap_code <= 11;
+                        current_int_handling <= 3;
                     end else begin
                         if_id_state.trap.is_exception <= 0; // dummy
                     end

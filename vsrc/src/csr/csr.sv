@@ -20,12 +20,33 @@ module csr
     output mode_t new_pmode,
     output bool update_pmode, // priviledge mode
 
+    // interrupts
+    input logic trint,
+    input logic swint,
+    input logic exint,
+
     output csr_pack csrs
 );
     parameter USER_MODE = 0;
     parameter MACHINE_MODE = 3;
 
     csr_pack csr_reg;
+
+    // assign csr_reg.mip[7] = trint;
+    // assign csr_reg.mip[3] = swint;
+    // assign csr_reg.mip[11] = exint;
+
+    // always_comb begin
+    //     csr_reg.mip = {
+    //         52'b0,
+    //         exint,
+    //         3'b000,
+    //         trint,
+    //         3'b000,
+    //         swint,
+    //         3'b000
+    //     };
+    // end
 
     assign csrs = csr_reg;
 
@@ -107,7 +128,7 @@ module csr
                     unique case (writer.csr_dest_addr)
                         CSR_MSTATUS: csr_reg.mstatus <= writer.csr_write_data & MSTATUS_MASK;
                         CSR_MTVEC: csr_reg.mtvec <= writer.csr_write_data & MTVEC_MASK;
-                        CSR_MIP: csr_reg.mip <= writer.csr_write_data & MIP_MASK;
+                        // CSR_MIP: csr_reg.mip <= writer.csr_write_data & MIP_MASK; // no writes to mip enabled
                         CSR_MIE: csr_reg.mie <= writer.csr_write_data;
                         CSR_MSCRATCH: csr_reg.mscratch <= writer.csr_write_data;
                         CSR_MCAUSE: csr_reg.mcause <= writer.csr_write_data;

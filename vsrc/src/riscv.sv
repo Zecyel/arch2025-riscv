@@ -86,7 +86,10 @@ module riscv
         .writer(csr_write),
         .pmode(pmode),
         .new_pmode(new_pmode),
-        .update_pmode(update_pmode)
+        .update_pmode(update_pmode),
+        .trint(trint),
+        .swint(swint),
+        .exint(exint)
     );
 
     always_comb begin
@@ -120,6 +123,9 @@ module riscv
         .swint(swint),
         .exint(exint),
         .priviledge_mode(pmode),
+        .mstatus(csrs.mstatus),
+        .mip(csrs.mip),
+        .mie(csrs.mie),
         .ok(fetch_ok)
     );
 
@@ -133,6 +139,10 @@ module riscv
         .forward2(mem_forward),
         .forward3(wb_forward),
 
+        .trint(trint),
+        .swint(swint),
+        .exint(exint),
+        
         .ok(decoder_ok)
     );
 

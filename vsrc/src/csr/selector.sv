@@ -12,14 +12,28 @@ module csr_selector
 (
     input csr_pack csr,
     input csr_addr csr_dest_addr,
-    output csr_t csr_out
+    output csr_t csr_out,
+
+    // interrupts
+    input logic trint,
+    input logic swint,
+    input logic exint
 );
 
     always_comb begin
         unique case (csr_dest_addr)
             CSR_MSTATUS: csr_out = csr.mstatus;
             CSR_MTVEC: csr_out = csr.mtvec;
-            CSR_MIP: csr_out = csr.mip;
+            // CSR_MIP: csr_out = csr.mip;
+            CSR_MIP: csr_out = {
+                52'b0,
+                exint,
+                3'b000,
+                trint,
+                3'b000,
+                swint,
+                3'b000
+            };
             CSR_MIE: csr_out = csr.mie;
             CSR_MSCRATCH: csr_out = csr.mscratch;
             CSR_MCAUSE: csr_out = csr.mcause;
