@@ -93,6 +93,7 @@ module fetch
                     if_id_state.inst_counter <= current_inst_counter + 1;
                     // if_id_state.inst_pc <= 114514; // no body cares. for better debugging experience
                     // ok, it seems that the trap handling program do care about it
+                    if_id_state.inst_pc <= jump.do_jump && jump.jump_inst ? jump.dest_addr : _pc + 4;
                 end else begin
                     if_id_state.trap.trap_valid <= 0;
                     if_id_state.trap.trap_code <= 0;
