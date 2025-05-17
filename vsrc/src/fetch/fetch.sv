@@ -39,6 +39,7 @@ module fetch
 
     word_t current_inst_counter;
     word_t stall_awokener;
+    word_t last_int_inst;
 
     always_ff @(posedge clk or posedge rst) begin
         if (rst) begin
@@ -60,7 +61,8 @@ module fetch
         end else if (! waiting & enable) begin
             if (! stall || inst_counter == stall_awokener) begin
                 stall <= 0; // clear the stall flag
-                if (trint || swint || exint) begin
+                if ((trint || swint || exint) && if_id_state.inst_counter - last_int_inst > 1000) begin
+                    last_int_inst <= if_id_state.inst_counter;
                     if_id_state.trap.trap_valid <= 1;
                     if (swint) begin
                         if_id_state.trap.trap_code <= 3;
