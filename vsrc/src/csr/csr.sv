@@ -83,8 +83,8 @@ module csr
                     };
     
                     // pc will be handled elsewhere
-                    // new_pmode <= csr_reg.mstatus.mpp;
-                    new_pmode <= USER_MODE;
+                    new_pmode <= csr_reg.mstatus[12:11];
+                    // new_pmode <= USER_MODE;
                     update_pmode <= 1;
                 end else if (! writer.csr_write_enable) begin
                     csr_reg.mcycle <= csr_reg.mcycle + 1;

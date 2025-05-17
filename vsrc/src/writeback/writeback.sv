@@ -56,7 +56,7 @@ module writeback
 
         if (mem_wb_state.trap.trap_valid == 1) begin
             if ((priviledge_mode == MACHINE_MODE && mstatus[3] == 1 || priviledge_mode == USER_MODE) && 
-                mip[mem_wb_state.trap.trap_code] == 1 && mie[mem_wb_state.trap.trap_code] == 1) begin
+                (mip[mem_wb_state.trap.trap_code] == 1 && mie[mem_wb_state.trap.trap_code] == 1 || mem_wb_state.trap.is_exception == 1)) begin
                     wb_commit_state.csr.trap = mem_wb_state.trap;
                     wb_commit_state.jump.do_jump = 1;
                     wb_commit_state.jump.jump_inst = 1;

@@ -79,7 +79,8 @@ module fetch
                     if_id_state.valid <= 0;
                     if_id_state.inst_counter <= current_inst_counter + 1;
 
-                end else if (_pc[1:0] != 0) begin
+                end else if (jump.do_jump == 1 && jump.jump_inst == 1 && jump.dest_addr[1:0] != 0 || _pc[1:0] != 0) begin
+                    $display("pc unalign met");
                     if_id_state.trap.trap_valid <= 1;
                     if_id_state.trap.trap_code <= 0; // pc unaligned
                     if_id_state.trap.is_exception <= 1;
@@ -90,6 +91,7 @@ module fetch
                     stall_awokener <= current_inst_counter + 1;
                     if_id_state.valid <= 0;
                     if_id_state.inst_counter <= current_inst_counter + 1;
+                    if_id_state.inst_pc <= 114514; // no body cares. for better debugging experience
                 end else begin
                     if_id_state.trap.trap_valid <= 0;
                     if_id_state.trap.trap_code <= 0;

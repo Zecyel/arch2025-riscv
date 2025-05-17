@@ -43,7 +43,7 @@ module mmu
                 end
 
                 IDLE: if (req_virt.valid) // the core send a request
-                    if (priviledge_mode == MACHINE_MODE) begin
+                    if (priviledge_mode == MACHINE_MODE || satp[63:60] == 0) begin
                         state <= PHY;
                         req_phys.valid <= req_virt.valid;
                         req_phys.is_write <= req_virt.is_write;
