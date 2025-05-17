@@ -80,7 +80,7 @@ module fetch
                     if_id_state.inst_counter <= current_inst_counter + 1;
 
                 end else if (jump.do_jump == 1 && jump.jump_inst == 1 && jump.dest_addr[1:0] != 0 || _pc[1:0] != 0) begin
-                    $display("pc unalign met");
+                    // $display("pc unalign met");
                     if_id_state.trap.trap_valid <= 1;
                     if_id_state.trap.trap_code <= 0; // pc unaligned
                     if_id_state.trap.is_exception <= 1;

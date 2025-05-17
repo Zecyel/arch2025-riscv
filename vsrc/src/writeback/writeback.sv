@@ -49,7 +49,15 @@ module writeback
         wb_commit_state.writer.reg_write_data = mem_wb_state.value;
         forward = wb_commit_state.writer;
 
-        csr = mem_wb_state.csr; // ??????????????
+        csr.csr_write_enable = mem_wb_state.csr.csr_write_enable;
+        csr.csr_write_data = mem_wb_state.csr.csr_write_data;
+        csr.csr_dest_addr = mem_wb_state.csr.csr_dest_addr;
+        csr.plain = mem_wb_state.csr.plain;
+        csr.ecall = mem_wb_state.csr.ecall;
+        csr.ebreak = mem_wb_state.csr.ebreak;
+        csr.mret = mem_wb_state.csr.mret;
+        csr.pc = mem_wb_state.csr.pc;
+        csr.inst_counter = mem_wb_state.csr.inst_counter;
 
         wb_commit_state.inst = mem_wb_state.inst;
         wb_commit_state.inst_pc = mem_wb_state.inst_pc;
@@ -58,19 +66,25 @@ module writeback
         if (mem_wb_state.trap.trap_valid == 1) begin
             if ((priviledge_mode == MACHINE_MODE && mstatus[3] == 1 || priviledge_mode == USER_MODE) && 
                 (mip[mem_wb_state.trap.trap_code] == 1 && mie[mem_wb_state.trap.trap_code] == 1 || mem_wb_state.trap.is_exception == 1 || mem_wb_state.op == ECALL)) begin
-                    wb_commit_state.csr.trap = mem_wb_state.trap; // enable the trap
+                    csr.trap = mem_wb_state.trap; // enable the trap
                     wb_commit_state.jump.do_jump = 1;
                     wb_commit_state.jump.jump_inst = 1;
                     wb_commit_state.jump.dest_addr = mtvec;
                     wb_commit_state.jump.inst_counter = mem_wb_state.jump.inst_counter;
                 end else begin
-                    wb_commit_state.csr.trap = 0;
+                    csr.trap.is_exception = 0;
+                    csr.trap.trap_code = 0;
+                    csr.trap.trap_valid = 0;
                     wb_commit_state.jump = mem_wb_state.jump;
                 end
         end else begin
-            wb_commit_state.csr.trap = 0;
+            csr.trap.is_exception = 0;
+            csr.trap.trap_code = 0;
+            csr.trap.trap_valid = 0;
             wb_commit_state.jump = mem_wb_state.jump;
         end
+
+        // csr.trap = wb_commit_state.csr.trap;
 
         wb_commit_state.difftest_skip = mem_wb_state.difftest_skip;
         wb_commit_state.inst_counter = mem_wb_state.inst_counter;
